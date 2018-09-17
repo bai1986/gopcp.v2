@@ -39,6 +39,7 @@ func Register(chatbot Chatbot) error {
 	if name == "" {
 		return ErrInvalidChatbotName
 	}
+	//如果已经存在则返回错误
 	if _, ok := chatbotMap[name]; ok {
 		return ErrExistingChatbot
 	}

@@ -11,7 +11,7 @@ func main() {
 	// 准备从标准输入读取数据。
 	inputReader := bufio.NewReader(os.Stdin)
 	fmt.Println("Please input your name:")
-	// 读取数据直到碰到 \n 为止。
+	// 读取数据直到碰到 \n 为止
 	input, err := inputReader.ReadString('\n')
 	if err != nil {
 		fmt.Printf("An error occurred: %s\n", err)
