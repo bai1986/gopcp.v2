@@ -17,10 +17,12 @@ import (
 )
 
 func main() {
+	//发送信号
 	go func() {
 		time.Sleep(5 * time.Second)
 		sendSignal()
 	}()
+	//处理进程信号
 	handleSignal()
 }
 
@@ -64,6 +66,7 @@ func sendSignal() {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Printf("Fatal Error: %s\n", err)
+			//打印错误调用栈
 			debug.PrintStack()
 		}
 	}()
@@ -87,6 +90,7 @@ func sendSignal() {
 	}
 	fmt.Printf("Target PID(s):\n%v\n", pids)
 	for _, pid := range pids {
+		//根据进程ID获取进程值
 		proc, err := os.FindProcess(pid)
 		if err != nil {
 			fmt.Printf("Process Finding Error: %s\n", err)
@@ -94,6 +98,7 @@ func sendSignal() {
 		}
 		sig := syscall.SIGQUIT
 		fmt.Printf("Send signal '%s' to the process (pid=%d)...\n", sig, pid)
+		//往进程发送信号
 		err = proc.Signal(sig)
 		if err != nil {
 			fmt.Printf("Signal Sending Error: %s\n", err)
@@ -123,6 +128,7 @@ func runCmds(cmds []*exec.Cmd) ([]string, error) {
 	var err error
 	for _, cmd := range cmds {
 		fmt.Printf("Run command: %v\n", getCmdPlaintext(cmd))
+		//把前一个命令的输出当做第二个命令的输入
 		if !first {
 			var stdinBuf bytes.Buffer
 			stdinBuf.Write(output)
@@ -136,6 +142,7 @@ func runCmds(cmds []*exec.Cmd) ([]string, error) {
 		if err = cmd.Wait(); err != nil {
 			return nil, getError(err, cmd)
 		}
+		//将输出buf里面的内容以字节形式返回
 		output = stdoutBuf.Bytes()
 		//fmt.Printf("Output:\n%s\n", string(output))
 		if first {
