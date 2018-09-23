@@ -165,7 +165,7 @@ func runCmds(cmds []*exec.Cmd) ([]string, error) {
 	outputBuf.Write(output)
 	for {
 		line, err := outputBuf.ReadBytes('\n')
-		fmt.Println("line:",line)
+		fmt.Println("line:",string(line))
 		if err != nil {
 			if err == io.EOF {
 				break
