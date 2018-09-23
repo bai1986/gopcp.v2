@@ -53,8 +53,8 @@ func handleSignal() {
 		wg.Done()
 	}()
 
-	fmt.Println("Wait for 2 seconds... ")
-	time.Sleep(2 * time.Second)
+	fmt.Println("Wait for 5 seconds... ")
+	time.Sleep(5 * time.Second)
 	fmt.Printf("Stop notification...")
 	signal.Stop(sigRecv1)
 	close(sigRecv1)
