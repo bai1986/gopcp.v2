@@ -91,7 +91,9 @@ func sendSignal() {
 		fmt.Printf("Command Execution Error: %s\n", err)
 		return
 	}
+	fmt.Println("output:",output)
 	pids, err := getPids(output)
+	fmt.Println("pids:",pids)
 	if err != nil {
 		fmt.Printf("PID Parsing Error: %s\n", err)
 		return
@@ -118,6 +120,7 @@ func sendSignal() {
 func getPids(strs []string) ([]int, error) {
 	var pids []int
 	for _, str := range strs {
+		fmt.Println("getPids str:",str)
 		pid, err := strconv.Atoi(strings.TrimSpace(str))
 		if err != nil {
 			return nil, err
