@@ -87,7 +87,7 @@ func sendSignal() {
 		exec.Command("grep", "signal"),
 		exec.Command("grep", "-v", "grep"),
 		exec.Command("grep", "-v", "go run"),
-		exec.Command("awk", "{print $1}"),
+		exec.Command("awk", "{print $3}"),
 	}
 	output, err := runCmds(cmds)
 	if err != nil {
