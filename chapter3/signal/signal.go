@@ -27,6 +27,7 @@ func main() {
 }
 
 func handleSignal() {
+	//处理信号程序，会一直等待信号的到来
 	sigRecv1 := make(chan os.Signal, 1)
 	sigs1 := []os.Signal{syscall.SIGINT, syscall.SIGQUIT}
 	fmt.Printf("Set notification for %s... [sigRecv1]\n", sigs1)
@@ -39,6 +40,7 @@ func handleSignal() {
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go func() {
+		//从通道等待信号
 		for sig := range sigRecv1 {
 			fmt.Printf("Received a signal from sigRecv1: %s\n", sig)
 		}
@@ -46,6 +48,7 @@ func handleSignal() {
 		wg.Done()
 	}()
 	go func() {
+		//从通道等待信号
 		for sig := range sigRecv2 {
 			fmt.Printf("Received a signal from sigRecv2: %s\n", sig)
 		}
@@ -60,13 +63,13 @@ func handleSignal() {
 	close(sigRecv1)
 	fmt.Printf("done. [sigRecv1]\n")
 	//关闭sigRecv2
-	fmt.Println("Wait for 20 seconds... ")
-	time.Sleep(20 * time.Second)
-	fmt.Printf("Stop notification...")
-	signal.Stop(sigRecv2)
-	close(sigRecv2)
-	fmt.Printf("done. [sigRecv2]\n")
-	wg.Wait()
+	//fmt.Println("Wait for 20 seconds... ")
+	//time.Sleep(20 * time.Second)
+	//fmt.Printf("Stop notification...")
+	//signal.Stop(sigRecv2)
+	//close(sigRecv2)
+	//fmt.Printf("done. [sigRecv2]\n")
+	//wg.Wait()
 }
 
 func sendSignal() {
@@ -84,7 +87,7 @@ func sendSignal() {
 		exec.Command("grep", "signal"),
 		exec.Command("grep", "-v", "grep"),
 		exec.Command("grep", "-v", "go run"),
-		exec.Command("awk", "{print $2}"),
+		exec.Command("awk", "{print $1}"),
 	}
 	output, err := runCmds(cmds)
 	if err != nil {
@@ -140,6 +143,7 @@ func runCmds(cmds []*exec.Cmd) ([]string, error) {
 	for _, cmd := range cmds {
 		fmt.Printf("Run command: %v\n", getCmdPlaintext(cmd))
 		//把前一个命令的输出当做第二个命令的输入
+		//第一个命令不会执行，因为第一个命令没有输入
 		if !first {
 			var stdinBuf bytes.Buffer
 			stdinBuf.Write(output)
@@ -156,6 +160,7 @@ func runCmds(cmds []*exec.Cmd) ([]string, error) {
 		//将输出buf里面的内容以字节形式返回
 		output = stdoutBuf.Bytes()
 		//fmt.Printf("Output:\n%s\n", string(output))
+		//把上一个命令的输出当做下一个命令的输入，
 		if first {
 			first = false
 		}
