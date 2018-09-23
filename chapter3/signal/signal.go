@@ -60,7 +60,7 @@ func handleSignal() {
 	time.Sleep(5 * time.Second)
 	fmt.Printf("Stop notification...")
 	signal.Stop(sigRecv1)
-	//close(sigRecv1)
+	close(sigRecv1)
 	fmt.Printf("done. [sigRecv1]\n")
 	//关闭sigRecv2
 	fmt.Println("Wait for 20 seconds... ")
