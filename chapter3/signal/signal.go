@@ -91,7 +91,7 @@ func sendSignal() {
 		fmt.Printf("Command Execution Error: %s\n", err)
 		return
 	}
-	fmt.Println("output:",output)
+	//fmt.Println("output:",output)
 	pids, err := getPids(output)
 	fmt.Println("pids:",pids)
 	if err != nil {
