@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a5b71a8-c113-4cd6-909b-58d097c22b6c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter3/signal/signal.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter3/signal/signal.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,8 +16,8 @@
       <file leaf-file-name="signal.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chapter3/signal/signal.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="561">
-              <caret line="59" column="19" lean-forward="true" selection-start-line="59" selection-start-column="19" selection-end-line="59" selection-end-column="19" />
+            <state relative-caret-position="212">
+              <caret line="135" column="30" lean-forward="true" selection-start-line="135" selection-start-column="30" selection-end-line="135" selection-end-column="30" />
             </state>
           </provider>
         </entry>
@@ -33,6 +33,7 @@
       <list>
         <option value="$PROJECT_DIR$/chapter2/talk/v1/simple.go" />
         <option value="$PROJECT_DIR$/chapter2/talk/v2/chatbot/chatbot.go" />
+        <option value="$PROJECT_DIR$/chapter3/signal/signal.go" />
       </list>
     </option>
   </component>
@@ -213,8 +214,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/chapter3/signal/signal.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="561">
-          <caret line="59" column="19" lean-forward="true" selection-start-line="59" selection-start-column="19" selection-end-line="59" selection-end-column="19" />
+        <state relative-caret-position="212">
+          <caret line="135" column="30" lean-forward="true" selection-start-line="135" selection-start-column="30" selection-end-line="135" selection-end-column="30" />
         </state>
       </provider>
     </entry>

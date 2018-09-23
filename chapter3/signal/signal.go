@@ -78,6 +78,7 @@ func sendSignal() {
 		}
 	}()
 	// ps aux | grep "signal" | grep -v "grep" | grep -v "go run" | awk '{print $2}'
+	//匿名管道
 	cmds := []*exec.Cmd{
 		exec.Command("ps", "aux"),
 		exec.Command("grep", "signal"),
@@ -161,6 +162,7 @@ func runCmds(cmds []*exec.Cmd) ([]string, error) {
 	outputBuf.Write(output)
 	for {
 		line, err := outputBuf.ReadBytes('\n')
+		fmt.Println("line:",line)
 		if err != nil {
 			if err == io.EOF {
 				break
