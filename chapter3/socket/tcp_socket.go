@@ -14,8 +14,10 @@ import (
 )
 
 const (
+	//使用连接协议
 	SERVER_NETWORK = "tcp"
 	SERVER_ADDRESS = "127.0.0.1:8085"
+	//数据边界字符
 	DELIMITER      = '\t'
 )
 
@@ -48,6 +50,7 @@ func strToInt32(str string) (int32, error) {
 }
 
 func cbrt(param int32) float64 {
+	//返回实数的立方根
 	return math.Cbrt(float64(param))
 }
 
@@ -64,12 +67,15 @@ func cbrt(param int32) float64 {
 func read(conn net.Conn) (string, error) {
 	readBytes := make([]byte, 1)
 	var buffer bytes.Buffer
+	//这里可以考虑使用buffer来接收数据
 	for {
 		_, err := conn.Read(readBytes)
 		if err != nil {
 			return "", err
 		}
+		//一次读取一个字节是为了防止错过分界符
 		readByte := readBytes[0]
+		// 遇到分界符则切分数据块
 		if readByte == DELIMITER {
 			break
 		}
@@ -80,7 +86,9 @@ func read(conn net.Conn) (string, error) {
 
 func write(conn net.Conn, content string) (int, error) {
 	var buffer bytes.Buffer
+	//写入响应内容
 	buffer.WriteString(content)
+	//写入数据分界符
 	buffer.WriteByte(DELIMITER)
 	return conn.Write(buffer.Bytes())
 }
@@ -101,11 +109,13 @@ func serverGo() {
 		}
 		printServerLog("Established a connection with a client application. (remote address: %s)",
 			conn.RemoteAddr())
+		//把接入进来的连接交给一个go
 		go handleConn(conn)
 	}
 }
 
 func handleConn(conn net.Conn) {
+	//结束之前关闭连接，释放资源
 	defer func() {
 		conn.Close()
 		wg.Done()
@@ -124,12 +134,15 @@ func handleConn(conn net.Conn) {
 		printServerLog("Received request: %s.", strReq)
 		intReq, err := strToInt32(strReq)
 		if err != nil {
+			//将错误信息响应给客户端
 			n, err := write(conn, err.Error())
 			printServerLog("Sent error message (written %d bytes): %s.", n, err)
 			continue
 		}
+		//返回实数的立方根
 		floatResp := cbrt(intReq)
 		respMsg := fmt.Sprintf("The cube root of %d is %f.", intReq, floatResp)
+		//将实数和实数的立方根响应给客户端
 		n, err := write(conn, respMsg)
 		if err != nil {
 			printServerLog("Write Error: %s", err)
@@ -150,6 +163,7 @@ func clientGo(id int) {
 		conn.RemoteAddr(), conn.LocalAddr())
 	time.Sleep(200 * time.Millisecond)
 	requestNumber := 5
+	//设置全局延迟为5毫秒
 	conn.SetDeadline(time.Now().Add(5 * time.Millisecond))
 	for i := 0; i < requestNumber; i++ {
 		req := rand.Int31()
@@ -177,6 +191,7 @@ func clientGo(id int) {
 func main() {
 	wg.Add(2)
 	go serverGo()
+	//这里休眠只是为了让日志看起来更清晰一些
 	time.Sleep(500 * time.Millisecond)
 	go clientGo(1)
 	wg.Wait()
