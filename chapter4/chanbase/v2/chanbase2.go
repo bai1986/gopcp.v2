@@ -31,6 +31,14 @@ func receive(strChan <-chan string,
 	}
 	fmt.Println("Stopped. [receiver]")
 	syncChan2 <- struct{}{}
+	//下面编译不能通过
+	//<- syncChan2
+	//下面编译可以通过，但运行不能通过
+	//syncChan1 <- struct{}{}
+	//下面编译不能通过，原因：不能关闭一个单向接收通道
+	//close(strChan)
+	//下面编译能通过，可以关闭一个单向发送通道
+	//close(syncChan2)
 }
 
 func send(strChan chan<- string,
