@@ -84,6 +84,7 @@ func read(conn net.Conn) (string, error) {
 	return buffer.String(), nil
 }
 
+
 func write(conn net.Conn, content string) (int, error) {
 	var buffer bytes.Buffer
 	//写入响应内容
@@ -92,6 +93,7 @@ func write(conn net.Conn, content string) (int, error) {
 	buffer.WriteByte(DELIMITER)
 	return conn.Write(buffer.Bytes())
 }
+
 
 func serverGo() {
 	var listener net.Listener

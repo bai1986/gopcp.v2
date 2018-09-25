@@ -12,6 +12,7 @@ func main() {
 			if elem, ok := <-dataChan; ok {
 				fmt.Printf("Received: %d [receiver]\n", elem)
 			} else {
+				fmt.Println("dataChan is close")
 				break
 			}
 		}
