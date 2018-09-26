@@ -5,6 +5,7 @@ import "fmt"
 func main() {
 	chanCap := 5
 	intChan := make(chan int, chanCap)
+	//使用随机算法
 	for i := 0; i < chanCap; i++ {
 		select {
 		case intChan <- 1:

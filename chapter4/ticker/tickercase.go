@@ -1,5 +1,4 @@
 package main
-
 import (
 	"fmt"
 	"time"
@@ -22,8 +21,11 @@ func main() {
 	for e := range intChan {
 		fmt.Printf("Received: %v\n", e)
 		sum += e
-		if sum > 10 {
+		fmt.Println("sum=",sum)
+		if sum > 30 {
 			fmt.Printf("Got: %v\n", sum)
+			//下面的停止断续器没有用
+			//ticker.Stop()
 			break
 		}
 	}

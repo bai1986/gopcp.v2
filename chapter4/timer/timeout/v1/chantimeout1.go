@@ -8,7 +8,7 @@ import (
 func main() {
 	intChan := make(chan int, 1)
 	go func() {
-		time.Sleep(time.Second)
+		time.Sleep(time.Millisecond * 450)
 		intChan <- 1
 	}()
 	select {

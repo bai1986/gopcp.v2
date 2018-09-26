@@ -9,6 +9,8 @@ var channels = []chan int{intChan1, intChan2}
 var numbers = []int{1, 2, 3, 4, 5}
 
 func main() {
+	//向未被初始化的channel发送消息会阻塞
+	//intChan1 intChan2 都未初始化
 	select {
 	case getChan(0) <- getNumber(0):
 		fmt.Println("The 1th case is selected.")

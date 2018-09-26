@@ -6,8 +6,9 @@ import (
 )
 
 func main() {
-	sendingInterval := time.Second
-	receptionInterval := time.Second * 2
+	sendingInterval := time.Second * 1
+	receptionInterval := time.Second * 3
+	//非缓冲通道
 	intChan := make(chan int, 0)
 	go func() {
 		var ts0, ts1 int64
@@ -44,3 +45,5 @@ Loop:
 	}
 	fmt.Println("End.")
 }
+//非缓冲通道规则：谁先操作谁阻塞，谁后操作先完成
+//不能简单依据打印语句来判断执行的先后顺序
