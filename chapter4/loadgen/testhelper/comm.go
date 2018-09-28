@@ -71,6 +71,7 @@ func (comm *TCPComm) CheckResp(
 	commResult.Resp = rawResp
 	var sreq ServerReq
 	err := json.Unmarshal(rawReq.Req, &sreq)
+	//如果发生了转换错误，表示致命错误，因为这两种类型是经过转化过来的，不应该出错
 	if err != nil {
 		commResult.Code = loadgenlib.RET_CODE_FATAL_CALL
 		commResult.Msg =
@@ -85,18 +86,21 @@ func (comm *TCPComm) CheckResp(
 			fmt.Sprintf("Incorrectly formatted Resp: %s!\n", string(rawResp.Resp))
 		return &commResult
 	}
+	//检查原始响应ID是否和原始请求ID一样
 	if sresp.ID != sreq.ID {
 		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE
 		commResult.Msg =
 			fmt.Sprintf("Inconsistent raw id! (%d != %d)\n", rawReq.ID, rawResp.ID)
 		return &commResult
 	}
+	//检查响应内容里面是否包含错误信息
 	if sresp.Err != nil {
 		commResult.Code = loadgenlib.RET_CODE_ERROR_CALEE
 		commResult.Msg =
 			fmt.Sprintf("Abnormal server: %s!\n", sresp.Err)
 		return &commResult
 	}
+	//对运算结果进行核算
 	if sresp.Result != op(sreq.Operands, sreq.Operator) {
 		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE
 		commResult.Msg =

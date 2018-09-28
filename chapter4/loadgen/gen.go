@@ -8,7 +8,6 @@ import (
 	"math"
 	"sync/atomic"
 	"time"
-
 	"gopcp.v2/chapter4/loadgen/lib"
 	"gopcp.v2/helper/log"
 )
@@ -75,13 +74,17 @@ func (gen *myGenerator) init() error {
 
 // callOne 会向载荷承受方发起一次调用。
 func (gen *myGenerator) callOne(rawReq *lib.RawReq) *lib.RawResp {
+	//原子的递增callCount的值
 	atomic.AddInt64(&gen.callCount, 1)
 	if rawReq == nil {
 		return &lib.RawResp{ID: -1, Err: errors.New("Invalid raw request.")}
 	}
+	//当前时间的纳秒数
 	start := time.Now().UnixNano()
+	//根据caller进行调用
 	resp, err := gen.caller.Call(rawReq.Req, gen.timeoutNS)
 	end := time.Now().UnixNano()
+	//计算耗时
 	elapsedTime := time.Duration(end - start)
 	var rawResp lib.RawResp
 	if err != nil {
@@ -101,10 +104,13 @@ func (gen *myGenerator) callOne(rawReq *lib.RawReq) *lib.RawResp {
 
 // asyncSend 会异步地调用承受方接口。
 func (gen *myGenerator) asyncCall() {
+	//从票池里面取票，得到之后继续执行，得不到则阻塞
 	gen.tickets.Take()
 	go func() {
+		//捕获宕机异常
 		defer func() {
 			if p := recover(); p != nil {
+				//recover() 结果值得实际类型是未知的（其静态类型是interface{}）
 				err, ok := interface{}(p).(error)
 				var errMsg string
 				if ok {
@@ -117,17 +123,23 @@ func (gen *myGenerator) asyncCall() {
 					ID:   -1,
 					Code: lib.RET_CODE_FATAL_CALL,
 					Msg:  errMsg}
+					//发送错误结果
 				gen.sendResult(result)
 			}
+			//不管是否发生宕机异常，都要归还票据
 			gen.tickets.Return()
 		}()
+		//根据传入的调用器生成一个载荷
 		rawReq := gen.caller.BuildReq()
 		// 调用状态：0-未调用或调用中；1-调用完成；2-调用超时。
 		var callStatus uint32
 		timer := time.AfterFunc(gen.timeoutNS, func() {
+			//CompareAndSwapUint32返回一个bool类型值，用以表示比较并交换是否成功,true表示交换OK
+			//如果未成功，就说明载荷响应接收操作已先完成，忽略超时处理
 			if !atomic.CompareAndSwapUint32(&callStatus, 0, 2) {
 				return
 			}
+			//如果成功，则构造超时结果，并发送
 			result := &lib.CallResult{
 				ID:     rawReq.ID,
 				Req:    rawReq,
@@ -137,12 +149,17 @@ func (gen *myGenerator) asyncCall() {
 			}
 			gen.sendResult(result)
 		})
+		//发起一次调用
 		rawResp := gen.callOne(&rawReq)
+		//已经完成
 		if !atomic.CompareAndSwapUint32(&callStatus, 0, 1) {
 			return
 		}
+		//已超时
+		//停止定时器
 		timer.Stop()
 		var result *lib.CallResult
+		//检查响应结果
 		if rawResp.Err != nil {
 			result = &lib.CallResult{
 				ID:     rawResp.ID,
@@ -151,6 +168,7 @@ func (gen *myGenerator) asyncCall() {
 				Msg:    rawResp.Err.Error(),
 				Elapse: rawResp.Elapse}
 		} else {
+			//为了确保调用结果发送的正确性，sendResult方法必须先检查载荷发生器的状态
 			result = gen.caller.CheckResp(rawReq, *rawResp)
 			result.Elapse = rawResp.Elapse
 		}
@@ -160,14 +178,19 @@ func (gen *myGenerator) asyncCall() {
 
 // sendResult 用于发送调用结果。
 func (gen *myGenerator) sendResult(result *lib.CallResult) bool {
+	//检查载荷发生器的状态,如果它的状态不是已启动，就不能执行发送操作了
 	if atomic.LoadUint32(&gen.status) != lib.STATUS_STARTED {
+		//记录调用结果
 		gen.printIgnoredResult(result, "stopped load generator")
 		return false
 	}
+	//检查调用结果channel是否已满
 	select {
 	case gen.resultCh <- result:
 		return true
+		//default是为了保证不会阻塞
 	default:
+		//记录发送channel空间占满
 		gen.printIgnoredResult(result, "full result channel")
 		return false
 	}
@@ -182,29 +205,39 @@ func (gen *myGenerator) printIgnoredResult(result *lib.CallResult, cause string)
 }
 
 // prepareStop 用于为停止载荷发生器做准备。
+//该方法接收一个信号发出缘由的error类型
+//该方法仅会仅在载荷发生器的状态为已启动时，把它变为正在停止状态
 func (gen *myGenerator) prepareToStop(ctxError error) {
 	logger.Infof("Prepare to stop load generator (cause: %s)...", ctxError)
+	//原子的CAS操作（比较并交换）
 	atomic.CompareAndSwapUint32(
 		&gen.status, lib.STATUS_STARTED, lib.STATUS_STOPPING)
 	logger.Infof("Closing result channel...")
+	//关闭结果channel
 	close(gen.resultCh)
+	//将gen的状态变为已停止
 	atomic.StoreUint32(&gen.status, lib.STATUS_STOPPED)
 }
 
-// genLoad 会产生载荷并向承受方发送。
+// genLoad 会产生载荷并向承受方发送。以节流阀作为参数
 func (gen *myGenerator) genLoad(throttle <-chan time.Time) {
 	for {
+		//这里<-gen.ctx.Done()有两个，是为了避免在第二个select中两种信号同时到达然后会随机选择一个
+		//保险起见，有两次Done()接收操作，是为了载荷发生器总能及时停止
 		select {
 		case <-gen.ctx.Done():
+			//gen.ctx.Err() 会返回一个error类型值，该值会体现"信号"被发出的缘由
 			gen.prepareToStop(gen.ctx.Err())
 			return
 		default:
 		}
 		gen.asyncCall()
 		if gen.lps > 0 {
+			//大于0 表示节流阀是有效并需要使用的
+			//使用select等待节流阀的到期通知
 			select {
-			case <-throttle:
-			case <-gen.ctx.Done():
+			case <-throttle: //收到通知，继续发送下一个负载
+			case <-gen.ctx.Done(): //该方法返回一个channel，该channel会在上下文超时或取消时关闭，这样针对他的接收操作就会立即返回
 				gen.prepareToStop(gen.ctx.Err())
 				return
 			}
@@ -240,8 +273,9 @@ func (gen *myGenerator) Start() bool {
 	gen.callCount = 0
 
 	// 设置状态为已启动。
+	//使用原子操作（一次一定会做完的操作），第一个参数是内存地址，第二个参数是要设置的值
 	atomic.StoreUint32(&gen.status, lib.STATUS_STARTED)
-
+	//保证Start()方法不会阻塞
 	go func() {
 		// 生成并发送载荷。
 		logger.Infoln("Generating loads...")
@@ -256,11 +290,15 @@ func (gen *myGenerator) Stop() bool {
 		&gen.status, lib.STATUS_STARTED, lib.STATUS_STOPPING) {
 		return false
 	}
+	//让ctx字段发出停止信号
 	gen.cancelFunc()
+	//不断检查状态的变更
 	for {
+		//如果状态变为已停止，说明prepareToStop方法已执行完毕，可以直接返回了
 		if atomic.LoadUint32(&gen.status) == lib.STATUS_STOPPED {
 			break
 		}
+		//休眠后继续检查
 		time.Sleep(time.Microsecond)
 	}
 	return true

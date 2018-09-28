@@ -1,5 +1,4 @@
 package testhelper
-
 import (
 	"bytes"
 	"encoding/json"
@@ -8,7 +7,6 @@ import (
 	"net"
 	"strconv"
 	"sync/atomic"
-
 	"gopcp.v2/helper/log"
 )
 
@@ -106,6 +104,7 @@ func reqHandler(conn net.Conn) {
 		} else {
 			sresp.ID = sreq.ID
 			sresp.Result = op(sreq.Operands, sreq.Operator)
+			//生成运算表达式
 			sresp.Formula =
 				genFormula(sreq.Operands, sreq.Operator, sresp.Result, true)
 		}
@@ -117,6 +116,7 @@ func reqHandler(conn net.Conn) {
 	if err != nil {
 		logger.Errorf("Server: Resp Marshal Error: %s", err)
 	}
+	//将响应写入连接
 	_, err = write(conn, bytes, DELIM)
 	if err != nil {
 		logger.Errorf("Server: Resp Write error: %s", err)

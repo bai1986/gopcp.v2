@@ -1,12 +1,10 @@
 package loadgen
-
 import (
 	"bytes"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
-
 	"gopcp.v2/chapter4/loadgen/lib"
 )
 

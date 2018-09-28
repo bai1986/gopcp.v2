@@ -17,10 +17,13 @@ func TestStart(t *testing.T) {
 	server := helper.NewTCPServer()
 	defer server.Close()
 	serverAddr := "127.0.0.1:8080"
+	//打印测试日志
 	t.Logf("Startup TCP server(%s)...\n", serverAddr)
 	err := server.Listen(serverAddr)
 	if err != nil {
+		//打印错误信息，并使当前测试立即失败
 		t.Fatalf("TCP Server startup failing! (addr=%s)!\n", serverAddr)
+		//结束接下来的测试，并且推出
 		t.FailNow()
 	}
 
@@ -35,6 +38,7 @@ func TestStart(t *testing.T) {
 	t.Logf("Initialize load generator (timeoutNS=%v, lps=%d, durationNS=%v)...",
 		pset.TimeoutNS, pset.LPS, pset.DurationNS)
 	gen, err := NewGenerator(pset)
+	//如果初始化不成功，报告错误，并且结束
 	if err != nil {
 		t.Fatalf("Load generator initialization failing: %s\n",
 			err)
@@ -58,6 +62,7 @@ func TestStart(t *testing.T) {
 	var total int
 	t.Log("RetCode Count:")
 	for k, v := range countMap {
+		//得到响应码的字符串标示
 		codePlain := loadgenlib.GetRetCodePlain(k)
 		t.Logf("  Code plain: %s (%d), Count: %d.\n",
 			codePlain, k, v)
@@ -65,7 +70,9 @@ func TestStart(t *testing.T) {
 	}
 
 	t.Logf("Total: %d.\n", total)
+	//获取成功响应的请求数
 	successCount := countMap[loadgenlib.RET_CODE_SUCCESS]
+	//计算tps（每秒有效处理载荷量）
 	tps := float64(successCount) / float64(pset.DurationNS/1e9)
 	t.Logf("Loads per second: %d; Treatments per second: %f.\n", pset.LPS, tps)
 }
