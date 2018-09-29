@@ -1,5 +1,4 @@
 package testhelper
-
 import (
 	"bufio"
 	"bytes"
@@ -19,6 +18,7 @@ const (
 var operators = []string{"+", "-", "*", "/"}
 
 // TCPComm 表示TCP通讯器的结构。
+//该类型实现了Caller接口方法，所以是Caller类型
 type TCPComm struct {
 	addr string
 }

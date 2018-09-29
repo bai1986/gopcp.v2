@@ -26,7 +26,7 @@ type myGoTickets struct {
 	active   bool          // 票池是否已被激活。
 }
 
-// NewGoTickets 会新建一个Goroutine票池。
+// NewGoTickets 会新建一个Goroutine 票池。
 func NewGoTickets(total uint32) (GoTickets, error) {
 	gt := myGoTickets{}
 	if !gt.init(total) {
