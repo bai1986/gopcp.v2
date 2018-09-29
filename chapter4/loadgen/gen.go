@@ -32,8 +32,8 @@ type myGenerator struct {
 
 // NewGenerator 会新建一个载荷发生器。
 func NewGenerator(pset ParamSet) (lib.Generator, error) {
-
 	logger.Infoln("New a load generator...")
+	//参数检查器
 	if err := pset.Check(); err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func NewGenerator(pset ParamSet) (lib.Generator, error) {
 		timeoutNS:  pset.TimeoutNS,
 		lps:        pset.LPS,
 		durationNS: pset.DurationNS,
-		status:     lib.STATUS_ORIGINAL,
+		status:     lib.STATUS_ORIGINAL, //原始状态
 		resultCh:   pset.ResultCh,
 	}
 	if err := gen.init(); err != nil {
@@ -56,10 +56,12 @@ func (gen *myGenerator) init() error {
 	var buf bytes.Buffer
 	buf.WriteString("Initializing the load generator...")
 	// 载荷的并发量 ≈ 载荷的响应超时时间 / 载荷的发送间隔时间
+	//+1表示在时间周期内向载荷发生器发送的那个载荷
 	var total64 = int64(gen.timeoutNS)/int64(1e9/gen.lps) + 1
 	if total64 > math.MaxInt32 {
 		total64 = math.MaxInt32
 	}
+	//在单位时间内的平均并发量
 	gen.concurrency = uint32(total64)
 	tickets, err := lib.NewGoTickets(gen.concurrency)
 	if err != nil {

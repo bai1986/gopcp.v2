@@ -38,6 +38,8 @@ func main() {
 		case e, ok := <-intChan:
 			if !ok {
 				fmt.Println("Received End.")
+				//关闭了定时器，第二个case会一直阻塞
+				//timer.Stop()
 				return
 			} else {
 				fmt.Printf("Received: %v\n", e)
@@ -46,5 +48,5 @@ func main() {
 			fmt.Println("Timer time:", c)
 		}
 	}
-
 }
+

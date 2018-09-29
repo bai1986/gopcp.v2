@@ -27,7 +27,7 @@ type ServerResp struct {
 	Result  int
 	Err     error
 }
-
+//根据操作数  操作符计算结果值
 func op(operands []int, operator string) int {
 	var result int
 	switch {
@@ -136,10 +136,13 @@ func NewTCPServer() *TCPServer {
 
 // init 会初始化服务器。
 func (server *TCPServer) init(addr string) error {
+	//校验服务器激活状态
 	if !atomic.CompareAndSwapUint32(&server.active, 0, 1) {
 		return nil
 	}
+	//指定协议 地址 返回一个监听器
 	ln, err := net.Listen("tcp", addr)
+	//如果发生错误，则重置服务器状态
 	if err != nil {
 		atomic.StoreUint32(&server.active, 0)
 		return err
@@ -156,6 +159,7 @@ func (server *TCPServer) Listen(addr string) error {
 	}
 	go func() {
 		for {
+			//如果服务器状态不是已激活，则退出
 			if atomic.LoadUint32(&server.active) != 1 {
 				break
 			}
@@ -166,6 +170,7 @@ func (server *TCPServer) Listen(addr string) error {
 				} else {
 					logger.Warnf("Server: Broken acception because of closed network connection.")
 				}
+				//如果监听当前连接出错，则跳过当前连接，继续处理下一个连接
 				continue
 			}
 			go reqHandler(conn)

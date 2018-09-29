@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"net"
 	"time"
-
 	loadgenlib "gopcp.v2/chapter4/loadgen/lib"
 )
 
@@ -73,7 +72,7 @@ func (comm *TCPComm) CheckResp(
 	err := json.Unmarshal(rawReq.Req, &sreq)
 	//如果发生了转换错误，表示致命错误，因为这两种类型是经过转化过来的，不应该出错
 	if err != nil {
-		commResult.Code = loadgenlib.RET_CODE_FATAL_CALL
+		commResult.Code = loadgenlib.RET_CODE_FATAL_CALL  //3001
 		commResult.Msg =
 			fmt.Sprintf("Incorrectly formatted Req: %s!\n", string(rawReq.Req))
 		return &commResult
@@ -81,35 +80,36 @@ func (comm *TCPComm) CheckResp(
 	var sresp ServerResp
 	err = json.Unmarshal(rawResp.Resp, &sresp)
 	if err != nil {
-		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE
+		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE  //2002
 		commResult.Msg =
 			fmt.Sprintf("Incorrectly formatted Resp: %s!\n", string(rawResp.Resp))
 		return &commResult
 	}
 	//检查原始响应ID是否和原始请求ID一样
 	if sresp.ID != sreq.ID {
-		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE
+		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE  //2002
 		commResult.Msg =
 			fmt.Sprintf("Inconsistent raw id! (%d != %d)\n", rawReq.ID, rawResp.ID)
 		return &commResult
 	}
 	//检查响应内容里面是否包含错误信息
 	if sresp.Err != nil {
-		commResult.Code = loadgenlib.RET_CODE_ERROR_CALEE
+		commResult.Code = loadgenlib.RET_CODE_ERROR_CALEE  //2003
 		commResult.Msg =
 			fmt.Sprintf("Abnormal server: %s!\n", sresp.Err)
 		return &commResult
 	}
 	//对运算结果进行核算
 	if sresp.Result != op(sreq.Operands, sreq.Operator) {
-		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE
+		commResult.Code = loadgenlib.RET_CODE_ERROR_RESPONSE  //2002
 		commResult.Msg =
 			fmt.Sprintf(
 				"Incorrect result: %s!\n",
+				//根据操作数 操作符生成运算表达式
 				genFormula(sreq.Operands, sreq.Operator, sresp.Result, false))
 		return &commResult
 	}
-	commResult.Code = loadgenlib.RET_CODE_SUCCESS
+	commResult.Code = loadgenlib.RET_CODE_SUCCESS //0
 	commResult.Msg = fmt.Sprintf("Success. (%s)", sresp.Formula)
 	return &commResult
 }
