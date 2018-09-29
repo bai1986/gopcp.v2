@@ -7,19 +7,20 @@ import (
 // RawReq 表示原生请求的结构。
 type RawReq struct {
 	ID  int64
-	Req []byte
+	Req []byte //请求体内容
 }
 
 // RawResp 表示原生响应的结构。
 type RawResp struct {
 	ID     int64
-	Resp   []byte
-	Err    error
-	Elapse time.Duration
+	Resp   []byte  //响应内容
+	Err    error //错误信息
+	Elapse time.Duration //响应耗时
 }
 
 // RetCode 表示结果代码的类型。
 type RetCode int
+
 
 // 保留 1 ~ 1000 给载荷承受方使用。
 const (
@@ -90,3 +91,4 @@ type Generator interface {
 	// 获取调用计数。每次启动会重置该计数。
 	CallCount() int64
 }
+
