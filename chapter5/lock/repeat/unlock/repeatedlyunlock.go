@@ -1,5 +1,4 @@
 package main
-
 import (
 	"fmt"
 	"sync"
@@ -21,4 +20,5 @@ func main() {
 	fmt.Println("The lock is unlocked.")
 	fmt.Println("Unlock the lock again.")
 	mutex.Unlock()
+	fmt.Println("continue ....")
 }

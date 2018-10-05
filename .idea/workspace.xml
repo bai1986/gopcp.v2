@@ -2,8 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5a5b71a8-c113-4cd6-909b-58d097c22b6c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/chapter4/loadgen/lib/gotickets.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter4/loadgen/lib/gotickets.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/chapter4/loadgen/testhelper/comm.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter4/loadgen/testhelper/comm.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter4/loadgen/gen_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter4/loadgen/gen_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/datafile/v1/datafile1.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/datafile/v1/datafile1.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/datafile/v1/datafile1_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/datafile/v1/datafile1_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/datafile/v2/datafile2.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/datafile/v2/datafile2.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/datafile/v3/datafile3.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/datafile/v3/datafile3.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/lock/repeat/unlock/repeatedlyunlock.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/lock/repeat/unlock/repeatedlyunlock.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/lock/rlock/rlock.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/lock/rlock/rlock.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/value/copy/copiedvalue.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/value/copy/copiedvalue.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/chapter5/value/cow/cow.go" beforeDir="false" afterPath="$PROJECT_DIR$/chapter5/value/cow/cow.go" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -14,47 +22,20 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="comm.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter4/loadgen/testhelper/comm.go">
+      <file leaf-file-name="datafile2.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/chapter5/datafile/v2/datafile2.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="349">
-              <caret line="120" column="9" lean-forward="true" selection-start-line="120" selection-start-column="9" selection-end-line="120" selection-end-column="9" />
-              <folding>
-                <element signature="e#20#144#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="612">
+              <caret line="108" column="30" lean-forward="true" selection-start-line="108" selection-start-column="30" selection-end-line="108" selection-end-column="30" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter4/loadgen/testhelper/server.go">
+      <file leaf-file-name="datafile3.go" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/chapter5/datafile/v3/datafile3.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="680">
-              <caret line="154" column="28" lean-forward="true" selection-start-line="154" selection-start-column="28" selection-end-line="154" selection-end-column="28" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="gen_test.go" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/chapter4/loadgen/gen_test.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="459">
-              <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
-              <folding>
-                <element signature="e#17#138#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="caller.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chapter4/loadgen/lib/caller.go">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="119">
-              <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-              <folding>
-                <element signature="e#13#31#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="204">
+              <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -65,6 +46,7 @@
     <findStrings>
       <find>ctx</find>
       <find>genFormula</find>
+      <find>prepareToStop</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="D:/Program Files (x86)/Go" />
@@ -93,13 +75,22 @@
         <option value="$PROJECT_DIR$/chapter4/ticker/tickercase.go" />
         <option value="$PROJECT_DIR$/chapter4/timer/timeout/v2/chantimeout2.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/parameter.go" />
-        <option value="$PROJECT_DIR$/chapter4/loadgen/gen_test.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/gen.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/testhelper/server.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/lib/base.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/lib/caller.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/lib/gotickets.go" />
         <option value="$PROJECT_DIR$/chapter4/loadgen/testhelper/comm.go" />
+        <option value="$PROJECT_DIR$/chapter4/loadgen/gen_test.go" />
+        <option value="$PROJECT_DIR$/chapter5/lock/repeat/unlock/repeatedlyunlock.go" />
+        <option value="$PROJECT_DIR$/chapter5/lock/rlock/rlock.go" />
+        <option value="$PROJECT_DIR$/chapter5/datafile/v1/datafile1_test.go" />
+        <option value="$PROJECT_DIR$/chapter5/datafile/v1/datafile1.go" />
+        <option value="$PROJECT_DIR$/chapter5/datafile/v2/datafile2.go" />
+        <option value="$PROJECT_DIR$/chapter5/value/copy/copiedvalue.go" />
+        <option value="$PROJECT_DIR$/chapter5/value/cow/cow.go" />
+        <option value="$PROJECT_DIR$/chapter5/value/cow/cow_test.go" />
+        <option value="$PROJECT_DIR$/chapter5/datafile/v3/datafile3.go" />
       </list>
     </option>
   </component>
@@ -113,10 +104,10 @@
     <packageJsonPaths />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-9" />
-    <option name="y" value="90" />
+    <option name="x" value="-102" />
+    <option name="y" value="108" />
     <option name="width" value="1936" />
-    <option name="height" value="1056" />
+    <option name="height" value="583" />
   </component>
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
@@ -137,31 +128,27 @@
             <path>
               <item name="gopcp.v2" type="b2602c69:ProjectViewProjectNode" />
               <item name="gopcp.v2" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter4" type="462c0819:PsiDirectoryNode" />
+              <item name="chapter5" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gopcp.v2" type="b2602c69:ProjectViewProjectNode" />
               <item name="gopcp.v2" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter4" type="462c0819:PsiDirectoryNode" />
-              <item name="loadgen" type="462c0819:PsiDirectoryNode" />
+              <item name="chapter5" type="462c0819:PsiDirectoryNode" />
+              <item name="datafile" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gopcp.v2" type="b2602c69:ProjectViewProjectNode" />
               <item name="gopcp.v2" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter4" type="462c0819:PsiDirectoryNode" />
-              <item name="loadgen" type="462c0819:PsiDirectoryNode" />
-              <item name="lib" type="462c0819:PsiDirectoryNode" />
+              <item name="chapter5" type="462c0819:PsiDirectoryNode" />
+              <item name="datafile" type="462c0819:PsiDirectoryNode" />
+              <item name="v2" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gopcp.v2" type="b2602c69:ProjectViewProjectNode" />
               <item name="gopcp.v2" type="462c0819:PsiDirectoryNode" />
-              <item name="chapter4" type="462c0819:PsiDirectoryNode" />
-              <item name="loadgen" type="462c0819:PsiDirectoryNode" />
-              <item name="testhelper" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="gopcp.v2" type="b2602c69:ProjectViewProjectNode" />
-              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="chapter5" type="462c0819:PsiDirectoryNode" />
+              <item name="datafile" type="462c0819:PsiDirectoryNode" />
+              <item name="v3" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -173,7 +160,7 @@
     <property name="go.gopath.indexing.explicitly.defined" value="true" />
     <property name="go.sdk.automatically.set" value="true" />
     <property name="go.vendoring.notification.had.been.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Golang_Puzzlers" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../go-websocket" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
@@ -194,85 +181,117 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Go Test.TestStop in gopcp.v2/chapter4/loadgen">
-    <configuration name="go build chantimeout1.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Go Test.cow_test.go">
+    <configuration name="go build copiedvalue.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="gopcp.v2" />
       <working_directory value="$PROJECT_DIR$/" />
       <go_parameters value="-i" />
       <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/chapter4/timer/timeout/v1/chantimeout1.go" />
+      <filePath value="$PROJECT_DIR$/chapter5/value/copy/copiedvalue.go" />
       <directory value="$PROJECT_DIR$/" />
     </configuration>
-    <configuration name="go build chantimeout2.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
+    <configuration name="TestConcurrentArray/all in gopcp.v2/chapter5/value/cow" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
       <module name="gopcp.v2" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <go_parameters value="-i" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/chapter4/timer/timeout/v2/chantimeout2.go" />
-      <directory value="$PROJECT_DIR$/" />
-    </configuration>
-    <configuration name="go build tickercase.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="gopcp.v2" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <go_parameters value="-i" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/chapter4/ticker/tickercase.go" />
-      <directory value="$PROJECT_DIR$/" />
-    </configuration>
-    <configuration name="go build timerbase.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
-      <module name="gopcp.v2" />
-      <working_directory value="$PROJECT_DIR$/" />
-      <go_parameters value="-i" />
-      <kind value="FILE" />
-      <filePath value="$PROJECT_DIR$/chapter4/timer/base/timerbase.go" />
-      <directory value="$PROJECT_DIR$/" />
-    </configuration>
-    <configuration name="TestStop in gopcp.v2/chapter4/loadgen" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
-      <module name="gopcp.v2" />
-      <working_directory value="$PROJECT_DIR$/chapter4/loadgen" />
+      <working_directory value="$PROJECT_DIR$/chapter5/value/cow" />
       <go_parameters value="-i" />
       <framework value="gotest" />
       <kind value="PACKAGE" />
-      <package value="gopcp.v2/chapter4/loadgen" />
+      <package value="gopcp.v2/chapter5/value/cow" />
       <directory value="$PROJECT_DIR$/" />
       <filePath value="$PROJECT_DIR$/" />
-      <pattern value="^TestStop$" />
+      <pattern value="^TestConcurrentArray$/^all$" />
+    </configuration>
+    <configuration name="TestIDataFile in gopcp.v2/chapter5/datafile/v2" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="gopcp.v2" />
+      <working_directory value="$PROJECT_DIR$/chapter5/datafile/v2" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="PACKAGE" />
+      <package value="gopcp.v2/chapter5/datafile/v2" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/" />
+      <pattern value="^TestIDataFile$" />
+    </configuration>
+    <configuration name="cow_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="gopcp.v2" />
+      <working_directory value="$PROJECT_DIR$/chapter5/value/cow" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/chapter5/value/cow/cow_test.go" />
+    </configuration>
+    <configuration name="datafile1_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="gopcp.v2" />
+      <working_directory value="$PROJECT_DIR$/chapter5/datafile/v1" />
+      <go_parameters value="-i" />
+      <framework value="gotest" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$/" />
+      <filePath value="$PROJECT_DIR$/chapter5/datafile/v1/datafile1_test.go" />
     </configuration>
     <list>
-      <item itemvalue="Go Build.go build chantimeout1.go" />
-      <item itemvalue="Go Build.go build timerbase.go" />
-      <item itemvalue="Go Build.go build chantimeout2.go" />
-      <item itemvalue="Go Build.go build tickercase.go" />
-      <item itemvalue="Go Test.TestStop in gopcp.v2/chapter4/loadgen" />
+      <item itemvalue="Go Test.datafile1_test.go" />
+      <item itemvalue="Go Test.TestIDataFile in gopcp.v2/chapter5/datafile/v2" />
+      <item itemvalue="Go Build.go build copiedvalue.go" />
+      <item itemvalue="Go Test.TestConcurrentArray/all in gopcp.v2/chapter5/value/cow" />
+      <item itemvalue="Go Test.cow_test.go" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Go Test.TestStop in gopcp.v2/chapter4/loadgen" />
-        <item itemvalue="Go Build.go build chantimeout2.go" />
-        <item itemvalue="Go Build.go build tickercase.go" />
-        <item itemvalue="Go Build.go build timerbase.go" />
-        <item itemvalue="Go Build.go build chantimeout1.go" />
+        <item itemvalue="Go Test.cow_test.go" />
+        <item itemvalue="Go Test.TestConcurrentArray/all in gopcp.v2/chapter5/value/cow" />
+        <item itemvalue="Go Build.go build copiedvalue.go" />
+        <item itemvalue="Go Test.TestIDataFile in gopcp.v2/chapter5/datafile/v2" />
+        <item itemvalue="Go Test.datafile1_test.go" />
       </list>
     </recent_temporary>
   </component>
   <component name="TestHistory">
-    <history-entry file="TestStop_in_gopcp_v2_chapter4_loadgen - 2018.09.28 at 18h 35m 23s.xml">
-      <configuration name="TestStop in gopcp.v2/chapter4/loadgen" configurationId="GoTestRunConfiguration" />
+    <history-entry file="datafile1_test_go - 2018.10.04 at 18h 02m 13s.xml">
+      <configuration name="datafile1_test.go" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="datafile1_test_go - 2018.10.04 at 18h 06m 54s.xml">
+      <configuration name="datafile1_test.go" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="datafile1_test_go - 2018.10.04 at 18h 07m 04s.xml">
+      <configuration name="datafile1_test.go" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="datafile1_test_go - 2018.10.04 at 18h 07m 22s.xml">
+      <configuration name="datafile1_test.go" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="datafile1_test_go - 2018.10.04 at 21h 03m 54s.xml">
+      <configuration name="datafile1_test.go" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestIDataFile_in_gopcp_v2_chapter5_datafile_v2 - 2018.10.04 at 22h 14m 56s.xml">
+      <configuration name="TestIDataFile in gopcp.v2/chapter5/datafile/v2" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestIDataFile_in_gopcp_v2_chapter5_datafile_v2 - 2018.10.04 at 22h 15m 41s.xml">
+      <configuration name="TestIDataFile in gopcp.v2/chapter5/datafile/v2" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestConcurrentArray_all_in_gopcp_v2_chapter5_value_cow - 2018.10.05 at 16h 02m 08s.xml">
+      <configuration name="TestConcurrentArray/all in gopcp.v2/chapter5/value/cow" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="TestConcurrentArray_all_in_gopcp_v2_chapter5_value_cow - 2018.10.05 at 16h 02m 35s.xml">
+      <configuration name="TestConcurrentArray/all in gopcp.v2/chapter5/value/cow" configurationId="GoTestRunConfiguration" />
+    </history-entry>
+    <history-entry file="cow_test_go - 2018.10.05 at 17h 50m 46s.xml">
+      <configuration name="cow_test.go" configurationId="GoTestRunConfiguration" />
     </history-entry>
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="32" width="1936" height="1056" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15833333" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.15208334" />
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.25792813" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.0" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.32980973" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -296,152 +315,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/chapter4/chanclose/chanclose.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="36" column="1" lean-forward="true" selection-start-line="36" selection-start-column="1" selection-end-line="36" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanbase/v2/chanbase2.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="33" column="14" lean-forward="true" selection-start-line="33" selection-start-column="14" selection-end-line="33" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanconv/chanconv.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="1" lean-forward="true" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanbase/v1/chanbase1.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="13" lean-forward="true" selection-start-line="9" selection-start-column="13" selection-end-line="9" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanbase/v3/chanbase3.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="17" lean-forward="true" selection-start-line="17" selection-end-line="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanselect/eval/selecteval.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="12" lean-forward="true" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanselect/random/selectrandom.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chanselect/for/selectfor.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="8" lean-forward="true" selection-start-line="2" selection-start-column="8" selection-end-line="2" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/chan0cap/chan0cap.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="48" column="22" selection-start-line="48" selection-start-column="22" selection-end-line="48" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://D:/Program Files (x86)/Go/src/time/sleep.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="216">
-          <caret line="149" column="36" lean-forward="true" selection-start-line="149" selection-start-column="36" selection-end-line="149" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/gobase/v2/gobase2.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="7" column="15" lean-forward="true" selection-start-line="7" selection-start-column="15" selection-end-line="7" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/gobase/v1/gobase1.go">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/gobase/v3/gobase3.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="11" column="7" lean-forward="true" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/gobase/v5/gobase5.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="13" column="5" lean-forward="true" selection-start-line="13" selection-start-column="5" selection-end-line="13" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/ticker/tickercase.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="32" lean-forward="true" selection-start-line="10" selection-start-column="32" selection-end-line="10" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/timer/timeout/v1/chantimeout1.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="12" lean-forward="true" selection-start-line="13" selection-start-column="12" selection-end-line="13" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/timer/timeout/v2/chantimeout2.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="442">
-          <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/timer/base/timerbase.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="12" column="31" lean-forward="true" selection-start-line="12" selection-start-column="31" selection-end-line="12" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/helper/pprof/profiling.go">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/helper/pkgtool/envir.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="18" column="1" lean-forward="true" selection-start-line="18" selection-start-column="1" selection-end-line="18" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/helper/ds/showds.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="1" lean-forward="true" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter3/apipe/apipe.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/vendor/golang.org/x/net/ipv4/bpf_test.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-688">
@@ -488,13 +361,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="305">
           <caret line="158" column="45" lean-forward="true" selection-start-line="158" selection-start-column="45" selection-end-line="158" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://D:/Program Files (x86)/Go/src/testing/testing.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="339">
-          <caret line="587" column="15" lean-forward="true" selection-start-line="587" selection-start-column="15" selection-end-line="587" selection-end-column="15" />
         </state>
       </provider>
     </entry>
@@ -560,16 +426,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/parameter.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="24" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
-          <folding>
-            <element signature="e#16#104#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://D:/Program Files (x86)/Go/src/time/time.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="245">
@@ -595,66 +451,228 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="315">
           <caret line="48" column="28" lean-forward="true" selection-start-line="48" selection-start-column="28" selection-end-line="48" selection-end-column="28" />
-          <folding>
-            <element signature="e#13#40#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/gen.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="288" lean-forward="true" selection-start-line="288" selection-end-line="288" />
-          <folding>
-            <element signature="e#17#151#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/lib/base.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
-          <folding>
-            <element signature="e#13#31#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/lib/caller.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="16" lean-forward="true" selection-start-line="7" selection-start-column="16" selection-end-line="7" selection-end-column="16" />
-          <folding>
-            <element signature="e#13#31#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chapter4/loadgen/testhelper/comm.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="349">
-          <caret line="120" column="9" lean-forward="true" selection-start-line="120" selection-start-column="9" selection-end-line="120" selection-end-column="9" />
-          <folding>
-            <element signature="e#20#144#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="289">
+          <caret line="26" column="5" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/parameter.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="723">
+          <caret line="49" column="55" lean-forward="true" selection-start-line="49" selection-start-column="55" selection-end-line="49" selection-end-column="55" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/lib/caller.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="7" lean-forward="true" selection-start-line="2" selection-start-column="7" selection-end-line="2" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chapter4/loadgen/testhelper/server.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="680">
-          <caret line="154" column="28" lean-forward="true" selection-start-line="154" selection-start-column="28" selection-end-line="154" selection-end-column="28" />
+        <state relative-caret-position="170">
+          <caret line="10" column="1" lean-forward="true" selection-start-line="10" selection-start-column="1" selection-end-line="10" selection-end-column="1" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chapter4/loadgen/gen_test.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="5" lean-forward="true" selection-start-line="27" selection-start-column="5" selection-end-line="27" selection-end-column="5" />
+        <state relative-caret-position="451">
+          <caret line="113" column="15" selection-start-line="113" selection-start-column="15" selection-end-line="113" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/lib/base.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter4/loadgen/gen.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="513">
+          <caret line="239" column="20" lean-forward="true" selection-start-line="239" selection-start-column="20" selection-end-line="239" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/lock/rlock/rlock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="15" column="39" lean-forward="true" selection-start-line="15" selection-start-column="39" selection-end-line="15" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/lock/repeat/unlock/repeatedlyunlock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="33" lean-forward="true" selection-start-line="14" selection-start-column="33" selection-end-line="14" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/lock/repeat/lock/repeatedlylock.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" column="1" lean-forward="true" selection-start-line="6" selection-start-column="1" selection-end-line="6" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/os/types.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="16" column="7" lean-forward="true" selection-start-line="16" selection-start-column="7" selection-end-line="16" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/os/error.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="458">
+          <caret line="58" column="1" lean-forward="true" selection-start-line="58" selection-start-column="1" selection-end-line="58" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/os/file.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="245" column="41" lean-forward="true" selection-start-line="245" selection-start-column="41" selection-end-line="245" selection-end-column="41" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/os/file_windows.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="646">
+          <caret line="283" column="22" lean-forward="true" selection-start-line="283" selection-start-column="22" selection-end-line="283" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/testing/testing.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="450">
+          <caret line="235" lean-forward="true" selection-start-line="235" selection-end-line="235" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/datafile/v1/datafile1_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="281">
+          <caret line="68" column="62" selection-start-line="68" selection-start-column="62" selection-end-line="68" selection-end-column="62" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/datafile/v1/datafile1.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="604">
+          <caret line="82" column="9" lean-forward="true" selection-start-line="82" selection-start-column="9" selection-end-line="82" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/sync/cond.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="31" column="18" lean-forward="true" selection-start-line="31" selection-start-column="18" selection-end-line="31" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/sync/mutex.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="332">
+          <caret line="30" column="5" selection-start-line="30" selection-start-column="5" selection-end-line="30" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/sync/rwmutex.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="112" column="29" lean-forward="true" selection-start-line="112" selection-start-column="29" selection-end-line="112" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/datafile/v2/datafile2_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="741">
+          <caret line="117" column="5" selection-start-line="117" selection-start-column="5" selection-end-line="117" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/cmap/base.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="1" lean-forward="true" selection-start-line="11" selection-start-column="1" selection-end-line="11" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/cmap/bucket.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="23" lean-forward="true" selection-start-line="9" selection-start-column="23" selection-end-line="9" selection-end-column="23" />
           <folding>
-            <element signature="e#17#138#0" expanded="true" />
+            <element signature="e#14#56#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/value/copy/copiedvalue.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="22" column="1" lean-forward="true" selection-start-line="22" selection-start-column="1" selection-end-line="22" selection-end-column="1" />
+          <folding>
+            <element signature="e#14#46#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/sync/atomic/value.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="459">
+          <caret line="29" column="16" selection-start-line="29" selection-start-column="16" selection-end-line="29" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://D:/Program Files (x86)/Go/src/builtin/builtin.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="441">
+          <caret line="133" column="7" selection-start-line="133" selection-start-column="6" selection-end-line="133" selection-end-column="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/value/cow/cow_test.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="774">
+          <caret line="68" column="1" lean-forward="true" selection-start-line="68" selection-start-column="1" selection-end-line="68" selection-end-column="1" />
+          <folding>
+            <element signature="e#13#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/value/cow/cow.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="663">
+          <caret line="57" column="1" lean-forward="true" selection-start-line="57" selection-start-column="1" selection-end-line="57" selection-end-column="1" />
+          <folding>
+            <element signature="e#13#55#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/datafile/v2/datafile2.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="612">
+          <caret line="108" column="30" lean-forward="true" selection-start-line="108" selection-start-column="30" selection-end-line="108" selection-end-column="30" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chapter5/datafile/v3/datafile3.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="204">
+          <caret line="30" column="22" selection-start-line="30" selection-start-column="22" selection-end-line="30" selection-end-column="22" />
         </state>
       </provider>
     </entry>

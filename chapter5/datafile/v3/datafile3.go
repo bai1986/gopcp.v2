@@ -28,6 +28,7 @@ type DataFile interface {
 }
 
 // myDataFile 代表数据文件的实现类型。
+//去掉了woffset和woffset的锁
 type myDataFile struct {
 	f       *os.File     // 文件。
 	fmutex  sync.RWMutex // 被用于文件的读写锁。
@@ -55,6 +56,8 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取并更新读偏移量
 	var offset int64
 	for {
+		//在32位计算机架构机器上写入一个64位的整数，会存在并发安全的隐患
+		//比如有另个go同时在修改df.roffset的值，可能会导致读取操作不正确
 		offset = atomic.LoadInt64(&df.roffset)
 		if atomic.CompareAndSwapInt64(&df.roffset, offset, (offset + int64(df.dataLen))) {
 			break

@@ -48,6 +48,8 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 		return nil, errors.New("Invalid data length!")
 	}
 	df := &myDataFile{f: f, dataLen: dataLen}
+	//针对读写锁的读操作实施信号通知
+	//sync.NewCond(&df.wmutex)
 	df.rcond = sync.NewCond(df.fmutex.RLocker())
 	return df, nil
 }
@@ -63,13 +65,18 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	//读取一个数据块。
 	rsn = offset / int64(df.dataLen)
 	bytes := make([]byte, df.dataLen)
+	//rcond.Wait()之前要先对读写锁进行读锁定
 	df.fmutex.RLock()
+	//及时对读写锁进行读解锁
 	defer df.fmutex.RUnlock()
 	for {
 		_, err = df.f.ReadAt(bytes, offset)
 		if err != nil {
 			if err == io.EOF {
-				df.rcond.Wait()
+				//一定要在调用rcond.Wait()方法之前锁定与之关联的读锁，否则会引发不可恢复的panic
+				//放弃尝试读锁定，等待通知
+				df.rcond.Wait() //Wait()方法返回之前会重新锁定与之关联的那个读锁
+				//收到通知，并且成功进行了读锁定
 				continue
 			}
 			return
@@ -95,9 +102,12 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	} else {
 		bytes = d
 	}
+	//与下面的Signal()方法没有关联
 	df.fmutex.Lock()
+	//与下面的Signal()方法没有关联
 	defer df.fmutex.Unlock()
 	_, err = df.f.Write(bytes)
+	//由于一个数据块只能有某个读操作读取，所以只是使用条件变量的Signal方法去通知某个为此等待的Wait()方法，并以此唤醒某一个相关的goroutine
 	df.rcond.Signal()
 	return
 }

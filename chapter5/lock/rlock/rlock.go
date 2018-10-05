@@ -20,6 +20,7 @@ func main() {
 		}(i)
 	}
 	time.Sleep(time.Millisecond * 100)
+	//time.Sleep(time.Second * 5)
 	fmt.Println("Try to lock for writing...")
 	rwm.Lock()
 	fmt.Println("Locked for writing.")

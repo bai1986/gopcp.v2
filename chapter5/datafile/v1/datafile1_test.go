@@ -20,9 +20,11 @@ func removeFile(path string) error {
 	return os.Remove(path)
 }
 
+
 func TestIDataFile(t *testing.T) {
 	t.Run("v1/all", func(t *testing.T) {
 		dataLen := uint32(3)
+		//filepath相当于node里面的path模块，os.TempDir()方法获取当前平台下的临时文件目录
 		path1 := filepath.Join(os.TempDir(), "data_file_test_new.txt")
 		defer func() {
 			if err := removeFile(path1); err != nil {
@@ -32,6 +34,7 @@ func TestIDataFile(t *testing.T) {
 		t.Run("New", func(t *testing.T) {
 			testNew(path1, dataLen, t)
 		})
+		//filepath相当于node里面的path模块，os.TempDir()方法获取当前平台下的临时文件目录
 		path2 := filepath.Join(os.TempDir(), "data_file_test.txt")
 		defer func() {
 			if err := removeFile(path2); err != nil {

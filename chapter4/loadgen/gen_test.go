@@ -3,7 +3,6 @@ package loadgen
 import (
 	"testing"
 	"time"
-
 	loadgenlib "gopcp.v2/chapter4/loadgen/lib"
 	helper "gopcp.v2/chapter4/loadgen/testhelper"
 )

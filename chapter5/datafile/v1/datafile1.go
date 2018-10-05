@@ -8,6 +8,7 @@ import (
 )
 
 // Data 代表数据的类型。
+//别名类型
 type Data []byte
 
 // DataFile 代表数据文件的接口类型。
@@ -32,8 +33,8 @@ type myDataFile struct {
 	fmutex  sync.RWMutex // 被用于文件的读写锁。
 	woffset int64        // 写操作需要用到的偏移量。
 	roffset int64        // 读操作需要用到的偏移量。
-	wmutex  sync.Mutex   // 写操作需要用到的互斥锁。
-	rmutex  sync.Mutex   // 读操作需要用到的互斥锁。
+	wmutex  sync.Mutex   // 写操作需要用到的互斥锁。对写操作偏移量进行锁定
+	rmutex  sync.Mutex   // 读操作需要用到的互斥锁。对读操作偏移量进行锁定
 	dataLen uint32       // 数据块长度。
 }
 
@@ -46,9 +47,11 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 	if dataLen == 0 {
 		return nil, errors.New("Invalid data length!")
 	}
+	//可以把指针类型当做一个接口类型返回（因为该指针类型已经实现了该接口类型）
 	df := &myDataFile{f: f, dataLen: dataLen}
 	return df, nil
 }
+
 
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取并更新读偏移量。
@@ -62,17 +65,24 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	rsn = offset / int64(df.dataLen)
 	bytes := make([]byte, df.dataLen)
 	for {
+		//对读写锁进行读锁定
+		//在每次的for循环中对读写锁进行读锁定，在结束时对读写锁进行读解锁是为了让其他goroutine可以进行写锁定
 		df.fmutex.RLock()
+		//根据偏移量读取文件内容
 		_, err = df.f.ReadAt(bytes, offset)
 		if err != nil {
 			if err == io.EOF {
+				//对读写锁进行读解锁
 				df.fmutex.RUnlock()
+				//遇到文件边界，继续尝试读取，这么做是为了防止读写文件的goroutine数量不一致
 				continue
 			}
+			//对读写锁进行读解锁
 			df.fmutex.RUnlock()
 			return
 		}
 		d = bytes
+		//对读写锁进行读解锁
 		df.fmutex.RUnlock()
 		return
 	}
@@ -90,11 +100,14 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	wsn = offset / int64(df.dataLen)
 	var bytes []byte
 	if len(d) > int(df.dataLen) {
+		//截取多余部分
 		bytes = d[0:df.dataLen]
 	} else {
 		bytes = d
 	}
+	//对读写锁进行写锁定
 	df.fmutex.Lock()
+	//对读写锁进行写解锁
 	defer df.fmutex.Unlock()
 	_, err = df.f.Write(bytes)
 	return

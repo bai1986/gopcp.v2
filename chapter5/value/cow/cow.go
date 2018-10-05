@@ -26,23 +26,30 @@ type intArray struct {
 func NewConcurrentArray(length uint32) ConcurrentArray {
 	array := intArray{}
 	array.length = length
+	//make([]int, array.length)返回一个slice指针
 	array.val.Store(make([]int, array.length))
 	return &array
 }
 
 func (array *intArray) Set(index uint32, elem int) (err error) {
+	//检查index索引是否合法
 	if err = array.checkIndex(index); err != nil {
 		return
 	}
+	//如果val中没有一个值，直接返回（在Set()中说明实例没有进行初始化）
 	if err = array.checkValue(); err != nil {
 		return
 	}
 
 	// 不要这样做！否则会形成竞态条件！
-	// oldArray := array.val.Load().([]int)
-	// oldArray[index] = elem
-	// array.val.Store(oldArray)
+	//array.val.Load().([]int)返回的是slice，在并发读写时会出现竞态
+	//无论在原子值Value中存储什么类型的值，只要新值需要根据旧值计算得出，那么并发写的时候就可能出现问题
+	//oldArray := array.val.Load().([]int)
+	//oldArray[index] = elem
+	//array.val.Store(oldArray)
 
+	//利用原子值实现了COW（copy-on-write）写时复制算法
+	//当要修改值时生成并修改副本，然后再用副本完全替换原值
 	newArray := make([]int, array.length)
 	copy(newArray, array.val.Load().([]int))
 	newArray[index] = elem
@@ -51,12 +58,15 @@ func (array *intArray) Set(index uint32, elem int) (err error) {
 }
 
 func (array *intArray) Get(index uint32) (elem int, err error) {
+	//检查index索引是否合法
 	if err = array.checkIndex(index); err != nil {
 		return
 	}
+	//如果val中没有一个值，直接返回
 	if err = array.checkValue(); err != nil {
 		return
 	}
+	//取出val并类型断言，然后取出指定索引位置的值
 	elem = array.val.Load().([]int)[index]
 	return
 }
