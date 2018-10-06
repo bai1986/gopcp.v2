@@ -30,6 +30,7 @@ func main() {
 
 	// 垃圾回收对临时对象池的影响。
 	debug.SetGCPercent(100)
+	//手动GC
 	runtime.GC()
 	v3 := pool.Get()
 	fmt.Printf("Value 3: %v\n", v3)
