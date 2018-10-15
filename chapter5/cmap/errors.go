@@ -13,7 +13,7 @@ func newIllegalParameterError(errMsg string) IllegalParameterError {
 		msg: fmt.Sprintf("concurrent map: illegal parameter: %s", errMsg),
 	}
 }
-
+//实现了Error接口
 func (ipe IllegalParameterError) Error() string {
 	return ipe.msg
 }
@@ -29,7 +29,7 @@ func newIllegalPairTypeError(pair Pair) IllegalPairTypeError {
 		msg: fmt.Sprintf("concurrent map: illegal pair type: %T", pair),
 	}
 }
-
+//实现了Error接口
 func (ipte IllegalPairTypeError) Error() string {
 	return ipte.msg
 }
@@ -46,6 +46,7 @@ func newPairRedistributorError(errMsg string) PairRedistributorError {
 	}
 }
 
+//实现了Error接口
 func (pre PairRedistributorError) Error() string {
 	return pre.msg
 }

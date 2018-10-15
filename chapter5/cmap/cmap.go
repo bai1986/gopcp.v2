@@ -26,8 +26,8 @@ type ConcurrentMap interface {
 
 // myConcurrentMap 代表ConcurrentMap接口的实现类型。
 type myConcurrentMap struct {
-	concurrency int
-	segments    []Segment
+	concurrency int  //并发量
+	segments    []Segment  //散列段
 	total       uint64
 }
 
@@ -44,14 +44,14 @@ func NewConcurrentMap(
 	}
 	cmap := &myConcurrentMap{}
 	cmap.concurrency = concurrency
-	cmap.segments = make([]Segment, concurrency)
+	cmap.segments = make([]Segment, concurrency) //散列段
 	for i := 0; i < concurrency; i++ {
 		cmap.segments[i] =
-			newSegment(DEFAULT_BUCKET_NUMBER, pairRedistributor)
+			newSegment(DEFAULT_BUCKET_NUMBER, pairRedistributor) //一个散列段默认有16个散列桶
 	}
 	return cmap, nil
 }
-
+//返回当前并发量
 func (cmap *myConcurrentMap) Concurrency() int {
 	return cmap.concurrency
 }
@@ -61,9 +61,10 @@ func (cmap *myConcurrentMap) Put(key string, element interface{}) (bool, error) 
 	if err != nil {
 		return false, err
 	}
-	s := cmap.findSegment(p.Hash())
+	s := cmap.findSegment(p.Hash()) //根据key的hash值找到散列段
 	ok, err := s.Put(p)
 	if ok {
+		//原子增加1
 		atomic.AddUint64(&cmap.total, 1)
 	}
 	return ok, err
@@ -71,8 +72,8 @@ func (cmap *myConcurrentMap) Put(key string, element interface{}) (bool, error) 
 
 func (cmap *myConcurrentMap) Get(key string) interface{} {
 	keyHash := hash(key)
-	s := cmap.findSegment(keyHash)
-	pair := s.GetWithHash(key, keyHash)
+	s := cmap.findSegment(keyHash) //根据key的hash值找到散列段
+	pair := s.GetWithHash(key, keyHash) //从散列段里面找到Pair元素
 	if pair == nil {
 		return nil
 	}
@@ -80,8 +81,9 @@ func (cmap *myConcurrentMap) Get(key string) interface{} {
 }
 
 func (cmap *myConcurrentMap) Delete(key string) bool {
-	s := cmap.findSegment(hash(key))
+	s := cmap.findSegment(hash(key))  //根据key的hash值找到散列段
 	if s.Delete(key) {
+		//原子减1
 		atomic.AddUint64(&cmap.total, ^uint64(0))
 		return true
 	}
@@ -89,12 +91,15 @@ func (cmap *myConcurrentMap) Delete(key string) bool {
 }
 
 func (cmap *myConcurrentMap) Len() uint64 {
+	//原子Load 键值对总数
 	return atomic.LoadUint64(&cmap.total)
 }
 
 // findSegment 会根据给定参数寻找并返回对应散列段。
 func (cmap *myConcurrentMap) findSegment(keyHash uint64) Segment {
+	//核心思想是：使用高位的几个字节来决定散列段的索引，这样可以让K-V元素在segments中分布更广一些，更均匀一些
 	if cmap.concurrency == 1 {
+		//如果并发量为1，则只有一个散列段
 		return cmap.segments[0]
 	}
 	var keyHash32 uint32

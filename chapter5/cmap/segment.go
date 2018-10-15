@@ -41,14 +41,15 @@ type segment struct {
 func newSegment(
 	bucketNumber int, pairRedistributor PairRedistributor) Segment {
 	if bucketNumber <= 0 {
-		bucketNumber = DEFAULT_BUCKET_NUMBER
+		bucketNumber = DEFAULT_BUCKET_NUMBER //16
 	}
 	if pairRedistributor == nil {
 		pairRedistributor =
 			newDefaultPairRedistributor(
-				DEFAULT_BUCKET_LOAD_FACTOR, bucketNumber)
+				DEFAULT_BUCKET_LOAD_FACTOR, bucketNumber) //默认散列桶加载因子0.75，散列桶数量
 	}
 	buckets := make([]Bucket, bucketNumber)
+	//初始化所有散列桶
 	for i := 0; i < bucketNumber; i++ {
 		buckets[i] = newBucket()
 	}
@@ -60,13 +61,19 @@ func newSegment(
 }
 
 func (s *segment) Put(p Pair) (bool, error) {
+	//对散列段上锁
 	s.lock.Lock()
+	//根据Pair哈希值找到一个散列桶
 	b := s.buckets[int(p.Hash()%uint64(s.bucketsLen))]
+	//把Pair放入散列桶
 	ok, err := b.Put(p, nil)
 	if ok {
+		//pairTotal总数原子加1
 		newTotal := atomic.AddUint64(&s.pairTotal, 1)
+		//触发散列段里面的散列桶K-V再分布
 		s.redistribute(newTotal, b.Size())
 	}
+	//散列段解锁
 	s.lock.Unlock()
 	return ok, err
 }
@@ -87,7 +94,9 @@ func (s *segment) Delete(key string) bool {
 	b := s.buckets[int(hash(key)%uint64(s.bucketsLen))]
 	ok := b.Delete(key, nil)
 	if ok {
+		//pairTotal原子减1
 		newTotal := atomic.AddUint64(&s.pairTotal, ^uint64(0))
+		//触发散列段里面的散列桶K-V再分布
 		s.redistribute(newTotal, b.Size())
 	}
 	s.lock.Unlock()
@@ -111,12 +120,16 @@ func (s *segment) redistribute(pairTotal uint64, bucketSize uint64) (err error) 
 			}
 		}
 	}()
+	//根据K-V总数和散列桶总数计算更新阀值
 	s.pairRedistributor.UpdateThreshold(pairTotal, s.bucketsLen)
+	//根据K-V总数和散列桶数量检查散列桶状态
 	bucketStatus := s.pairRedistributor.CheckBucketStatus(pairTotal, bucketSize)
+	//根据散列桶状态和散列桶切片重新分布K-V
 	newBuckets, changed := s.pairRedistributor.Redistribe(bucketStatus, s.buckets)
+	//changed表示是否重新分布
 	if changed {
-		s.buckets = newBuckets
-		s.bucketsLen = len(s.buckets)
+		s.buckets = newBuckets //将重新分布后的散列桶赋值给当前散列段
+		s.bucketsLen = len(s.buckets) //重新计算散列桶数量
 	}
 	return nil
 }

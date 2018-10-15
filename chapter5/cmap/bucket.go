@@ -54,25 +54,34 @@ func (b *bucket) Put(p Pair, lock sync.Locker) (bool, error) {
 		lock.Lock()
 		defer lock.Unlock()
 	}
+	//获取桶中第一个K-V对
 	firstPair := b.GetFirstPair()
+	//桶中没有元素值
 	if firstPair == nil {
+		//把传进来的元素存入firstValue
 		b.firstValue.Store(p)
 		atomic.AddUint64(&b.size, 1)
 		return true, nil
 	}
 	var target Pair
 	key := p.Key()
+	//根据参数p遍历匹配是否有匹配的pair
 	for v := firstPair; v != nil; v = v.Next() {
 		if v.Key() == key {
 			target = v
 			break
 		}
 	}
+	//找到了，替换
 	if target != nil {
 		target.SetElement(p.Element())
 		return false, nil
 	}
+	//没有找到
+	//把当前的第一个K-V对指定为参数值得单链目标
+	//把旧firstPair连接到当前pair后面，当前pair成为新firstPair
 	p.SetNext(firstPair)
+	//用当前pair替换桶中的firstValue，由于桶的firstValue是原子值类型，所以不用加锁
 	b.firstValue.Store(p)
 	atomic.AddUint64(&b.size, 1)
 	return true, nil
@@ -107,34 +116,53 @@ func (b *bucket) Delete(key string, lock sync.Locker) bool {
 		defer lock.Unlock()
 	}
 	firstPair := b.GetFirstPair()
+	//桶里一个pair都没有
 	if firstPair == nil {
 		return false
 	}
+	//前导K-V列表，前导pair列表
 	var prevPairs []Pair
+	//目标pair
 	var target Pair
+	//目标pair的下一个pair，也就是要断开的pair
 	var breakpoint Pair
 	for v := firstPair; v != nil; v = v.Next() {
 		if v.Key() == key {
 			target = v
+			//找到了目标pair，那么目标pair的下一个pair就是需要断开的pair
 			breakpoint = v.Next()
 			break
 		}
+		//将不匹配的pair放入前导pair列表
 		prevPairs = append(prevPairs, v)
 	}
+	//没有找到目标pair，说明当前bucket中没有这个K，则无需删除
 	if target == nil {
 		return false
 	}
+	//将前导pair列表的最后一个和后续pair连接起来
+	// -->1-->2-->3-->4-->5 其中3是目标pair，现在要把3删除掉
+	//重新连接后的
+	//-->1-->2-->4-->5
 	newFirstPair := breakpoint
 	for i := len(prevPairs) - 1; i >= 0; i-- {
+		//依次（从最后一个pair开始）取出前导pair列表中的pair
 		pairCopy := prevPairs[i].Copy()
+		//把断裂后的头pair链接到前导pari的最后一个pair
 		pairCopy.SetNext(newFirstPair)
+		//链接了断裂的头pair的pair将成为新的断头pair，依次和前导pair链接起来
 		newFirstPair = pairCopy
+		//最后一个（前导pair列表的第一个pair将成为新的firstValue）
 	}
+	//将新的firstValue存入桶中firstValue中
 	if newFirstPair != nil {
+		//原子存储
 		b.firstValue.Store(newFirstPair)
 	} else {
+		//原子的存入站位值
 		b.firstValue.Store(placeholder)
 	}
+	//原子的减1
 	atomic.AddUint64(&b.size, ^uint64(0))
 	return true
 }
@@ -145,6 +173,7 @@ func (b *bucket) Clear(lock sync.Locker) {
 		defer lock.Unlock()
 	}
 	atomic.StoreUint64(&b.size, 0)
+	//站位，保证下一次重新使用不会panic
 	b.firstValue.Store(placeholder)
 }
 
