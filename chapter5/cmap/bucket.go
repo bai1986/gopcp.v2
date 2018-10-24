@@ -81,7 +81,7 @@ func (b *bucket) Put(p Pair, lock sync.Locker) (bool, error) {
 	//把当前的第一个K-V对指定为参数值得单链目标
 	//把旧firstPair连接到当前pair后面，当前pair成为新firstPair
 	p.SetNext(firstPair)
-	//用当前pair替换桶中的firstValue，由于桶的firstValue是原子值类型，所以不用加锁
+	//用当前pair替换桶中的firstValue
 	b.firstValue.Store(p)
 	atomic.AddUint64(&b.size, 1)
 	return true, nil
@@ -145,6 +145,7 @@ func (b *bucket) Delete(key string, lock sync.Locker) bool {
 	//重新连接后的
 	//-->1-->2-->4-->5
 	newFirstPair := breakpoint
+	//是否可以再优化
 	for i := len(prevPairs) - 1; i >= 0; i-- {
 		//依次（从最后一个pair开始）取出前导pair列表中的pair
 		pairCopy := prevPairs[i].Copy()
@@ -163,6 +164,8 @@ func (b *bucket) Delete(key string, lock sync.Locker) bool {
 		b.firstValue.Store(placeholder)
 	}
 	//原子的减1
+	//原子减法 atomic.AddUint64(&b.size, ^uint64(-N-1)) //其中N表示负数，总结起来就是对负数求绝对值再减1之后取其补码
+	//原子的减5 ==> atomic.AddUint64(&b.size, ^uint64(4))
 	atomic.AddUint64(&b.size, ^uint64(0))
 	return true
 }

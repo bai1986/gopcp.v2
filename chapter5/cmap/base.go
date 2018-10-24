@@ -1,5 +1,7 @@
 package cmap
 
+import "sync"
+
 const (
 	// DEFAULT_BUCKET_LOAD_FACTOR 代表默认的装载因子。
 	// 当散列段中的某个散列桶的尺寸超过了
@@ -15,3 +17,4 @@ const (
 	// MAX_CONCURRENCY 代表最大并发量。
 	MAX_CONCURRENCY int = 65536
 )
+var mp sync.Map

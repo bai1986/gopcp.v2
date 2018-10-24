@@ -18,6 +18,19 @@ type SNGenertor interface {
 	// Get 用于获得一个序列号并准备下一个序列号。
 	Get() uint64
 }
+//序列号生成器的接口类型
+type SNGenertorr interface {
+	//用于获取预设的最小序列号
+	Start() uint64
+	//用于获取预设的最大序列号
+	Max() uint64
+	//用于获取下一个序列号
+	Next() uint64
+	//用于获取循环技术
+	CycleCount() uint64
+	//用于获取一个序列号并准备下一个序列号
+	Get() uint64
+}
 
 // NewSNGenertor 会创建一个序列号生成器。
 // 参数start用于指定第一个序列号的值。
@@ -30,6 +43,17 @@ func NewSNGenertor(start uint64, max uint64) SNGenertor {
 		start: start,
 		max:   max,
 		next:  start,
+	}
+}
+
+func NewSNGenertorr(start uint64, max uint64) SNGenertorr {
+	if max == 0 {
+		max = math.MaxUint64
+	}
+	return &mySNGenertorr{
+		start:start,
+		max:max,
+		next:start,
 	}
 }
 
@@ -47,7 +71,25 @@ type mySNGenertor struct {
 	lock sync.RWMutex
 }
 
+//代表序列号生成器的实现类型
+type mySNGenertorr struct {
+	//序列号的最小值
+	start uint64
+	//序列号的最大值
+	max uint64
+	//下一个序列号
+	next uint64
+	//循环计数
+	cycleCount uint64
+	//读写锁
+	lock sync.RWMutex
+}
+
 func (gen *mySNGenertor) Start() uint64 {
+	return gen.start
+}
+
+func (gen *mySNGenertorr) Start() uint64 {
 	return gen.start
 }
 
@@ -55,7 +97,17 @@ func (gen *mySNGenertor) Max() uint64 {
 	return gen.max
 }
 
+func (gen *mySNGenertorr) Max() uint64 {
+	return gen.max
+}
+
 func (gen *mySNGenertor) Next() uint64 {
+	gen.lock.RLock()
+	defer gen.lock.RUnlock()
+	return gen.next
+}
+
+func (gen *mySNGenertorr) Next() uint64 {
 	gen.lock.RLock()
 	defer gen.lock.RUnlock()
 	return gen.next
@@ -67,7 +119,26 @@ func (gen *mySNGenertor) CycleCount() uint64 {
 	return gen.cycleCount
 }
 
+func (gen *mySNGenertorr) CycleCount() uint64 {
+	gen.lock.RLock()
+	defer gen.lock.RUnlock()
+	return gen.cycleCount
+}
+
 func (gen *mySNGenertor) Get() uint64 {
+	gen.lock.Lock()
+	defer gen.lock.Unlock()
+	id := gen.next
+	if id == gen.max {
+		gen.next = gen.start
+		gen.cycleCount++
+	} else {
+		gen.next++
+	}
+	return id
+}
+
+func (gen *mySNGenertorr) Get() uint64 {
 	gen.lock.Lock()
 	defer gen.lock.Unlock()
 	id := gen.next

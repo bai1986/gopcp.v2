@@ -3,13 +3,21 @@ package cookie
 import (
 	"net/http"
 	"net/http/cookiejar"
-
 	"golang.org/x/net/publicsuffix"
 )
 
 // NewCookiejar 用于创建http.CookieJar类型的实例。
 func NewCookiejar() http.CookieJar {
 	options := &cookiejar.Options{PublicSuffixList: &myPublicSuffixList{}}
+	cj, _ := cookiejar.New(options)
+	return cj
+}
+
+//newcookiejar  用于创建http.CookieJar类型的实例
+func NewCookieJar() http.CookieJar {
+	options := &cookiejar.Options{
+		PublicSuffixList:&myPublicSuffixList{},
+	}
 	cj, _ := cookiejar.New(options)
 	return cj
 }

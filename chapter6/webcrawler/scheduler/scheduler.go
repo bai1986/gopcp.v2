@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 	"sync"
-
 	"gopcp.v2/chapter5/cmap"
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/chapter6/webcrawler/toolkit/buffer"
@@ -16,6 +15,7 @@ import (
 
 // logger 代表日志记录器。
 var logger = log.DLogger()
+var loggerr = log.DLogger()
 
 // Scheduler 代表调度器的接口类型。
 type Scheduler interface {
@@ -44,10 +44,40 @@ type Scheduler interface {
 	Summary() SchedSummary
 }
 
+//调度器接口类型
+type Schedulerr interface {
+	//init用于初始化调度器
+	//requestargs 代表请求相关参数
+	//dataargs 表示数据相关参数
+	//moduleargs 表示组件相关参数
+	Init(requestArgs RequestArgss, dataArgs DataArgss, moduleArgs ModuleArgss) (err error)
+	//start用于启动调度器并执行爬虫流程
+	//参数firsthttpreq代表首次请求，调度器会以此为起始节点开始爬虫流程
+	Start(firstHTTPReq *http.Request) (err error)
+	//用于停止调度器的运行
+	//所有处理模块的执行流程都会中止
+	Stop() (err error)
+	//用于获取调度器的状态
+	Status() Statuss
+	//用于获取错误值通道
+	//调度器以及各个处理模块运行过程中出现的错误值都会被发送到这个通道
+	//如果结果为nil，则说明通道不可用或者调度器已经停止
+	ErrorChan() <-chan error
+	//idle 用于判断所有处理模块是否都处于空闲状态
+	Idle() bool
+	//用于获取摘要实例
+	Summary() SchedSummaryy
+}
+
+
 // NewScheduler 会创建一个调度器实例。
 func NewScheduler() Scheduler {
 	return &myScheduler{}
 }
+
+//func NewSchedulerr() Schedulerr {
+//	return &mySchedulerr{}
+//}
 
 // myScheduler 代表调度器的实现类型。
 type myScheduler struct {
@@ -79,6 +109,36 @@ type myScheduler struct {
 	summary SchedSummary
 }
 
+//调度器的实现类型
+type mySchedulerr struct {
+	//代表爬去的最大深度，首次请求深度为0
+	maxDepth uint32
+	//代表可用接手的URL主域名的字典
+	acceptedDomainMap cmap.ConcurrentMap
+	//代表组件注册器
+	registrar module.Registrarr
+	//请求缓冲池
+	reqBufferPool buffer.Pool
+	//响应缓冲池
+	respBufferPool buffer.Pool
+	//条目缓冲池
+	itemBufferPool buffer.Pool
+	//错误缓冲池
+	errorBufferPool buffer.Pool
+	//代表已处理的URL字典
+	urlMap cmap.ConcurrentMap
+	//上下文，用于感知调度器的停止
+	ctx context.Context
+	//代表取消函数，用于停止调度器
+	cancelFunc context.CancelFunc
+	//代表状态
+	status Statuss
+	//专用于状态的读写锁,保证状态的读写分离
+	statusLock sync.RWMutex
+	//代表摘要信息
+	summary SchedSummaryy
+}
+
 func (sched *myScheduler) Init(
 	requestArgs RequestArgs,
 	dataArgs DataArgs,
@@ -93,9 +153,11 @@ func (sched *myScheduler) Init(
 	}
 	defer func() {
 		sched.statusLock.Lock()
+		//如果变更状态有错误，则回滚状态
 		if err != nil {
 			sched.status = oldStatus
 		} else {
+			//如果没有错误，则在init结束时将状态变为已经初始化
 			sched.status = SCHED_STATUS_INITIALIZED
 		}
 		sched.statusLock.Unlock()
@@ -135,6 +197,7 @@ func (sched *myScheduler) Init(
 	logger.Infof("-- URL map: length: %d, concurrency: %d",
 		sched.urlMap.Len(), sched.urlMap.Concurrency())
 	sched.initBufferPool(dataArgs)
+	//重置调度器上下文
 	sched.resetContext()
 	sched.summary =
 		newSchedSummary(requestArgs, dataArgs, moduleArgs, sched)
@@ -159,13 +222,16 @@ func (sched *myScheduler) Start(firstHTTPReq *http.Request) (err error) {
 	// 检查状态。
 	logger.Info("Check status for start...")
 	var oldStatus Status
+	//函数执行中，设置状态为正在开始中
 	oldStatus, err =
 		sched.checkAndSetStatus(SCHED_STATUS_STARTING)
 	defer func() {
 		sched.statusLock.Lock()
+		//如果设置正在开始中状态失败，那么就状态回滚
 		if err != nil {
 			sched.status = oldStatus
 		} else {
+			//否则将状态设置为已经开始
 			sched.status = SCHED_STATUS_STARTED
 		}
 		sched.statusLock.Unlock()
@@ -213,6 +279,8 @@ func (sched *myScheduler) Stop() (err error) {
 		sched.checkAndSetStatus(SCHED_STATUS_STOPPING)
 	defer func() {
 		sched.statusLock.Lock()
+		//进入函数时改变状态失败则回滚状态
+		//否则在stop函数执行结束时将调度器状态变为已经停止
 		if err != nil {
 			sched.status = oldStatus
 		} else {
@@ -223,7 +291,8 @@ func (sched *myScheduler) Stop() (err error) {
 	if err != nil {
 		return
 	}
-	sched.cancelFunc()
+	//向调度器
+	sched.cancelFunc() //发送context关闭信号
 	sched.reqBufferPool.Close()
 	sched.respBufferPool.Close()
 	sched.itemBufferPool.Close()
@@ -234,6 +303,16 @@ func (sched *myScheduler) Stop() (err error) {
 
 func (sched *myScheduler) Status() Status {
 	var status Status
+	//这个地方是读取调度器的状态，所以允许并发读取，但是在读取的过程中不允许写入
+	//只有在改变调度器状态的时候，上写锁，让写GO独占状态资源，读写分离
+	sched.statusLock.RLock()
+	status = sched.status
+	sched.statusLock.RUnlock()
+	return status
+}
+
+func (sched *mySchedulerr) Status() Statuss {
+	var status Statuss
 	sched.statusLock.RLock()
 	status = sched.status
 	sched.statusLock.RUnlock()
@@ -242,9 +321,15 @@ func (sched *myScheduler) Status() Status {
 
 func (sched *myScheduler) ErrorChan() <-chan error {
 	errBuffer := sched.errorBufferPool
+	//构建一个新的channel，缓冲长度为buffer的容量
 	errCh := make(chan error, errBuffer.BufferCap())
+	//思考：如何将一个双向channel转换成一个单向channel
+	//回答：通过函数返回值的方式
+	// <- chan error
 	go func(errBuffer buffer.Pool, errCh chan error) {
 		for {
+			//检查1
+			//从错误缓冲池里面拿数据之前，检查调度器是否关闭，如果关闭则直接放弃拿数据
 			if sched.canceled() {
 				close(errCh)
 				break
@@ -261,6 +346,8 @@ func (sched *myScheduler) ErrorChan() <-chan error {
 				sendError(errors.New(errMsg), "", sched.errorBufferPool)
 				continue
 			}
+			//检查2
+			//往错误channel里面发送数据时，检测调度器是否已关闭，若已关闭则放弃发送数据
 			if sched.canceled() {
 				close(errCh)
 				break
@@ -297,6 +384,17 @@ func (sched *myScheduler) checkAndSetStatus(
 	defer sched.statusLock.Unlock()
 	oldStatus = sched.status
 	err = checkStatus(oldStatus, wantedStatus, nil)
+	if err == nil {
+		sched.status = wantedStatus
+	}
+	return
+}
+
+func (sched *mySchedulerr) checkAndSetStatus(wantedStatus Statuss) (oldStatus Statuss, err error) {
+	sched.statusLock.Lock()
+	defer sched.statusLock.Unlock()
+	oldStatus = sched.status
+	err = checkStatuss(oldStatus,wantedStatus,nil)
 	if err == nil {
 		sched.status = wantedStatus
 	}
@@ -366,6 +464,7 @@ func (sched *myScheduler) download() {
 				logger.Warnln("The request buffer pool was closed. Break request reception.")
 				break
 			}
+			//断言从请求缓冲池里面拿到的数据是 *module.Request类型的
 			req, ok := datum.(*module.Request)
 			if !ok {
 				errMsg := fmt.Sprintf("incorrect request type: %T", datum)
@@ -384,10 +483,13 @@ func (sched *myScheduler) downloadOne(req *module.Request) {
 	if sched.canceled() {
 		return
 	}
+	//从注册器中获取一个下载器
 	m, err := sched.registrar.Get(module.TYPE_DOWNLOADER)
 	if err != nil || m == nil {
 		errMsg := fmt.Sprintf("couldn't get a downloader: %s", err)
+		//往错误缓冲池中放一个错误
 		sendError(errors.New(errMsg), "", sched.errorBufferPool)
+		//将请求放入请求缓冲池
 		sched.sendReq(req)
 		return
 	}
@@ -395,15 +497,20 @@ func (sched *myScheduler) downloadOne(req *module.Request) {
 	if !ok {
 		errMsg := fmt.Sprintf("incorrect downloader type: %T (MID: %s)",
 			m, m.ID())
+		//往错误缓冲池中放一个错误
 		sendError(errors.New(errMsg), m.ID(), sched.errorBufferPool)
+		//将请求放入请求缓冲池
 		sched.sendReq(req)
 		return
 	}
+	//下载请求，真正的下载逻辑这里并没有写，而是依赖下载器组件
 	resp, err := downloader.Download(req)
 	if resp != nil {
+		//把响应内容写入响应缓冲池中
 		sendResp(resp, sched.respBufferPool)
 	}
 	if err != nil {
+		//报告当前组件ID发生错误
 		sendError(err, m.ID(), sched.errorBufferPool)
 	}
 }
@@ -443,6 +550,7 @@ func (sched *myScheduler) analyzeOne(resp *module.Response) {
 	if err != nil || m == nil {
 		errMsg := fmt.Sprintf("couldn't get an analyzer: %s", err)
 		sendError(errors.New(errMsg), "", sched.errorBufferPool)
+		//分析器获取失败，将该响应重新当如响应池里面
 		sendResp(resp, sched.respBufferPool)
 		return
 	}
@@ -451,19 +559,27 @@ func (sched *myScheduler) analyzeOne(resp *module.Response) {
 		errMsg := fmt.Sprintf("incorrect analyzer type: %T (MID: %s)",
 			m, m.ID())
 		sendError(errors.New(errMsg), m.ID(), sched.errorBufferPool)
+		//分析器获取失败，将该响应重新当如响应池里面
 		sendResp(resp, sched.respBufferPool)
 		return
 	}
+	//这里并不执行真正的分析流程，而是调用分析器组件
 	dataList, errs := analyzer.Analyze(resp)
 	if dataList != nil {
 		for _, data := range dataList {
 			if data == nil {
 				continue
 			}
+			//断言分析结果的类型
 			switch d := data.(type) {
+			//是新的请求
 			case *module.Request:
+				//将新请求放入请求池中
+				//发送请求到请求缓冲池为什么方法参数只有请求，这是接收者为调度器的方法
 				sched.sendReq(d)
 			case module.Item:
+				//将条目放入条目缓冲池
+				//发送条目到条目缓冲池里面，是调用公共函数
 				sendItem(d, sched.itemBufferPool)
 			default:
 				errMsg := fmt.Sprintf("Unsupported data type %T! (data: %#v)", d, d)
@@ -509,6 +625,7 @@ func (sched *myScheduler) pickOne(item module.Item) {
 	if err != nil || m == nil {
 		errMsg := fmt.Sprintf("couldn't get a pipeline pipline: %s", err)
 		sendError(errors.New(errMsg), "", sched.errorBufferPool)
+		//将条目重新放入条目缓冲池中
 		sendItem(item, sched.itemBufferPool)
 		return
 	}
@@ -517,9 +634,11 @@ func (sched *myScheduler) pickOne(item module.Item) {
 		errMsg := fmt.Sprintf("incorrect pipeline type: %T (MID: %s)",
 			m, m.ID())
 		sendError(errors.New(errMsg), m.ID(), sched.errorBufferPool)
+		//将条目重新放入条目缓冲池中
 		sendItem(item, sched.itemBufferPool)
 		return
 	}
+	//调用条目处理组件，将条目发送到条目处理器
 	errs := pipeline.Send(item)
 	if errs != nil {
 		for _, err := range errs {
@@ -547,6 +666,7 @@ func (sched *myScheduler) sendReq(req *module.Request) bool {
 		logger.Warnln("Ignore the request! Its URL is invalid!")
 		return false
 	}
+	//获取URL使用的协议
 	scheme := strings.ToLower(reqURL.Scheme)
 	if scheme != "http" && scheme != "https" {
 		logger.Warnf("Ignore the request! Its URL scheme is %q, but should be %q or %q. (URL: %s)\n",
@@ -686,11 +806,26 @@ func (sched *myScheduler) checkBufferPoolForStart() error {
 func (sched *myScheduler) resetContext() {
 	sched.ctx, sched.cancelFunc = context.WithCancel(context.Background())
 }
+//用于重置调度器的上下文
+func (sched *mySchedulerr) resetContext() {
+	sched.ctx, sched.cancelFunc = context.WithCancel(context.Background())
+}
 
 // canceled 用于判断调度器的上下文是否已被取消。
 func (sched *myScheduler) canceled() bool {
 	select {
+	//接收关闭信号
 	case <-sched.ctx.Done():
+		return true
+	default:
+		return false
+	}
+}
+
+//用于判断调度器的上下文是否已被取消掉
+func (sched *mySchedulerr) canceled() bool {
+	select {
+	case <- sched.ctx.Done():
 		return true
 	default:
 		return false

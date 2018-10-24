@@ -17,6 +17,7 @@ type keyElement struct {
 
 func TestPairNew(t *testing.T) {
 	testCases := genTestingKeyElementSlice(100)
+	//第一个设置为k=="",v==rand
 	testCases[0] = &keyElement{"", randElement()}
 	for _, tc := range testCases {
 		t.Run(fmt.Sprintf("Key=%s,Element=%#v", tc.key, tc.element),
@@ -34,6 +35,7 @@ func TestPairNew(t *testing.T) {
 	}
 }
 
+//测试生成的Key, Hash, Element是否正确
 func TestPairKeyAndHashAndElement(t *testing.T) {
 	testCases := genTestingKeyElementSlice(30)
 	for _, tc := range testCases {
@@ -61,6 +63,7 @@ func TestPairKeyAndHashAndElement(t *testing.T) {
 	}
 }
 
+
 func TestPairSet(t *testing.T) {
 	testCases := genTestingKeyElementSlice(30)
 	for _, tc := range testCases {
@@ -87,6 +90,7 @@ func TestPairNext(t *testing.T) {
 	var current Pair
 	var prev Pair
 	var err error
+	// 把上一个元素链接在自己的后边
 	for _, tc := range testCases {
 		current, err = newPair(tc.key, tc.element)
 		if err != nil {
@@ -110,6 +114,7 @@ func TestPairNext(t *testing.T) {
 				t.Fatalf("Next is nil! (pair: %#v, index: %d)",
 					current, i)
 			}
+			//当前i ，下一个i-1
 			expectedNext := testCases[i-1]
 			if next.Key() != expectedNext.key {
 				t.Fatalf("Inconsistent next key: expected: %s, actual: %s, index: %d",
@@ -123,6 +128,8 @@ func TestPairNext(t *testing.T) {
 		current = next
 	}
 }
+
+
 
 func TestPairCopy(t *testing.T) {
 	testCases := genTestingKeyElementSlice(30)

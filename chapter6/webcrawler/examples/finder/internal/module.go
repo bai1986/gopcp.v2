@@ -10,6 +10,9 @@ import (
 // snGen 代表组件序列号生成器。
 var snGen = module.NewSNGenertor(1, 0)
 
+//snGen 代表序列号生成器
+var snGenn = module.NewSNGenertor(1,0)
+
 // GetDownloaders 用于获取下载器列表。
 func GetDownloaders(number uint8) ([]module.Downloader, error) {
 	downloaders := []module.Downloader{}
@@ -55,6 +58,7 @@ func GetAnalyzers(number uint8) ([]module.Analyzer, error) {
 }
 
 // GetPipelines 用于获取条目处理管道列表。
+//dirPath 表示图片要存储的路径
 func GetPipelines(number uint8, dirPath string) ([]module.Pipeline, error) {
 	pipelines := []module.Pipeline{}
 	if number == 0 {

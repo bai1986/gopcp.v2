@@ -18,3 +18,21 @@ type ModuleInternal interface {
 	// Clear 用于清空所有计数。
 	Clear()
 }
+
+
+//组件的内部基础接口类型
+type ModuleInternall interface {
+	module.Modulee
+	//调用计数增1
+	IncrCalledCount()
+	//接收计数增1
+	IncrAcceptedCount()
+	//成功计数增1
+	IncrCompletedCount()
+	//实时处理计数增1
+	IncrHandlingNumber()
+	//实时计数减1
+	DecrHandlingNumber()
+	//清空所有计数
+	Clear()
+}

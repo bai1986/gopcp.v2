@@ -8,13 +8,64 @@ import (
 	"strings"
 	"testing"
 	"time"
-
 	"github.com/PuerkitoBio/goquery"
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/chapter6/webcrawler/module/local/analyzer"
 	"gopcp.v2/chapter6/webcrawler/module/local/downloader"
 	"gopcp.v2/chapter6/webcrawler/module/local/pipeline"
 )
+
+func TestArgsRequestt(t *testing.T) {
+	requestArgs := genRequestArgs([]string{},0)
+	if err := requestArgs.Check(); err != nil {
+		t.Fatalf("inconsistent check result: expected :%v,actual: %v",nil,err)
+	}
+	requestArgs = genRequestArgs(nil, 0)
+	if err := requestArgs.Check(); err == nil {
+		t.Fatalf("inconsisten check result: expected: %v,actual: %v",nil,err)
+	}
+	one := genRequestArgss([]string{
+		"bing.com",
+	},0)
+	another := genRequestArgss([]string{
+		"bing.com",
+	},0)
+	same := one.Same(&another)
+	if !same {
+		t.Fatalf("inconsisten request argumenst sameness :expected: %v,actual: %v",true,same)
+	}
+	another = genRequestArgss([]string{
+		"bing.com",
+	},1)
+	same = one.Same(&another)
+	if same {
+		t.Fatalf("inconsistent request argumensts sameness with different max depth: expected: %v,actual: %v",false,same)
+	}
+	another = genRequestArgss([]string{
+		"bing.com",
+	},1)
+	same = one.Same(&another)
+	if same {
+		t.Fatalf("inconsistent request arguments sameness with different max depth: expected: %v,actual: %v",false,same)
+	}
+	another = genRequestArgss(nil,0)
+	same= one.Same(&another)
+	if same {
+		t.Fatalf("")
+	}
+	another= genRequestArgss(nil,0)
+	same = one.Same(&another)
+	if same {
+		t.Fatalf("in...")
+	}
+	another = genRequestArgss([]string{
+		"bing.net",
+		"bing.com",
+	},0)
+	same = one.Same(&another)
+	if same {  }
+	//TODO
+}
 
 func TestArgsRequest(t *testing.T) {
 	requestArgs := genRequestArgs([]string{}, 0)
@@ -99,11 +150,36 @@ func TestArgsData(t *testing.T) {
 	}
 }
 
+func TestArgsDataa(t *testing.T) {
+	dataArgs := genDataArgss(10,2,1)
+	if err := dataArgs.Check(); err != nil {
+		t.Fatalf("inconsistent check result :expected:%v,actual: %v",nil,err)
+	}
+	dataArgsList := []DataArgss{}
+	for i:=0; i<8; i++ {
+		values := [8]uint32{2,2,2,2,2,2,2,2}
+		values[i] = 0
+		dataArgsList = append(dataArgsList, genDataArgsByDetaill(values))
+	}
+	for _, dataArgs := range dataArgsList {
+		if err := dataArgs.Check(); err == nil {
+			t.Fatalf("no error when check data arguments (dataArgs: %#v)",dataArgs)
+		}
+	}
+}
+
 // genRequestArgs 用于生成请求参数的实例。
 func genRequestArgs(acceptedDomains []string, maxDepth uint32) RequestArgs {
 	return RequestArgs{
 		AcceptedDomains: acceptedDomains,
 		MaxDepth:        maxDepth,
+	}
+}
+//用于生成请求参数的实例
+func genRequestArgss(acceptedDomains []string, maxDepth uint32) RequestArgss {
+	return RequestArgss{
+		AcceptedDomains:acceptedDomains,
+		MaxDepth:maxDepth,
 	}
 }
 
@@ -125,6 +201,26 @@ func genDataArgs(
 	return genDataArgsByDetail(values)
 }
 
+//用于生成数据参数的实例
+func genDataArgss(
+	bufferCap uint32,
+	maxBufferNumber uint32,
+	stepLen uint32) DataArgss {
+	values := [8]uint32{}
+	var bufferCapStep uint32
+	var maxBufferNumberStep uint32
+	for i := uint32(0);i<8;i++ {
+		if i % 2 ==0 {
+			values[i] = bufferCap + bufferCapStep*stepLen
+			bufferCapStep++
+		} else {
+			values[i] = maxBufferNumber + maxBufferNumberStep*stepLen
+			maxBufferNumberStep++
+		}
+	}
+	return genDataArgsByDetaill(values)
+}
+
 // genDataArgs 用于根据细致的参数生成数据参数的实例。
 func genDataArgsByDetail(values [8]uint32) DataArgs {
 	return DataArgs{
@@ -136,6 +232,20 @@ func genDataArgsByDetail(values [8]uint32) DataArgs {
 		ItemMaxBufferNumber:  values[5],
 		ErrorBufferCap:       values[6],
 		ErrorMaxBufferNumber: values[7],
+	}
+}
+
+//用于根据细致的参数生成数据参数的实例
+func genDataArgsByDetaill(values [8]uint32) DataArgss {
+	return DataArgss{
+		ReqBufferCap:values[0],
+		ReqMaxBufferNumber:values[1],
+		RespBufferCap:values[2],
+		RespMaxBufferNumber:values[3],
+		ItemBufferCap:values[4],
+		ItemMaxBufferNumber:values[5],
+		ErrorBufferCap:values[6],
+		ErrorMaxBufferNumber:values[7],
 	}
 }
 
@@ -272,6 +382,73 @@ func genSimplePipelines(number int8, reuseMID bool, snGen module.SNGenertor, t *
 		results[i] = p
 	}
 	return results
+}
+
+//代表一个响应解析函数的实现，只解析A标签
+func parseATagg(httpResp *http.Response, respDepth uint32) ([]module.Dataa, []error) {
+	//TODO 支持更多的HTTP响应状态
+	if httpResp.StatusCode != 200 {
+		err := fmt.Errorf("unsupported status code %d! (httpResponse :%v)",httpResp.StatusCode, httpResp)
+		return nil, []error{err}
+	}
+	reqURL := httpResp.Request.URL
+	httpRespBody := httpResp.Body
+	defer func() {
+		if httpRespBody != nil {
+			httpRespBody.Close()
+		}
+	}()
+	var dataList []module.Dataa
+	var errs []error
+	doc, err := goquery.NewDocumentFromReader(httpRespBody)
+	if err != nil {
+		errs = append(errs, err)
+		return dataList, errs
+	}
+	defer httpRespBody.Close()
+	doc.Find("a").Each(func(index int, selection *goquery.Selection) {
+		href, exists := selection.Attr("href")
+		if !exists || href == "" || href == "#" || href == "/" {
+			return
+		}
+		href = strings.TrimSpace(href)
+		lowerHref := strings.ToLower(href)
+		//暂时不支持JavaScript解析
+		if href != "" && !strings.HasPrefix(lowerHref, "javascript") {
+			aURL, err := url.Parse(href)
+			if err != nil {
+				loggerr.Warnf("an error occurs when parsing attribute %q in tag %q: %s (href : %s)",errs,"href","a",href)
+				return
+			}
+			if !aURL.IsAbs() {
+				aURL = reqURL.ResolveReference(aURL)
+			}
+			httpReq, err := http.NewRequest("GET",aURL.String(),nil)
+			if err != nil {
+				errs = append(errs, err)
+			} else {
+				req := module.NewRequest(httpReq,respDepth)
+				dataList = append(dataList, req)
+			}
+		}
+		text := strings.TrimSpace(selection.Text())
+		var id,name string
+		if v,ok := selection.Attr("id");ok {
+			id  = strings.TrimSpace(v)
+		}
+		if v, ok := selection.Attr("name");ok {
+			name = strings.TrimSpace(v)
+		}
+		m := make(map[string]interface{})
+		m["a.parent"] = reqURL
+		m["a.id"] = id
+		m["a.name"] = name
+		m["a.text"] = text
+		m["a.index"] = index
+		item := module.Itemm(m)
+		dataList = append(dataList, item)
+	})
+	return dataList, errs
 }
 
 // parseATag 代表一个响应解析函数的实现，只解析“A”标签。

@@ -41,8 +41,10 @@ type pair struct {
 	key string
 	// hash 代表键的哈希值。
 	hash    uint64
-	element unsafe.Pointer  //可寻址的指针类型
-	next    unsafe.Pointer  //可寻址的指针类型
+	element unsafe.Pointer  //可寻址的指针类型，该指针类型可以包含任意类型的指针
+	next    unsafe.Pointer  //可寻址的指针类型，该指针类型可以包含任意类型的指针
+	//Pointer类型是普通指针（*T）类型转换为内存地址（uintptr）的中间值
+	//Pointer类型也是内存地址（uintptr）转换为普通指针类型（*T）的中间值
 }
 
 // newPair 会创建一个Pair类型的实例。
@@ -55,6 +57,7 @@ func newPair(key string, element interface{}) (Pair, error) {
 		hash: hash(key),
 	}
 	//将一个element接口值封装成一个可寻址的指针类型
+	//将*T普通指针类型 --> 特殊的指针类型
 	p.element = unsafe.Pointer(&element)
 	return p, nil
 }
@@ -62,6 +65,7 @@ func newPair(key string, element interface{}) (Pair, error) {
 func (p *pair) Key() string {
 	return p.key
 }
+
 
 func (p *pair) Hash() uint64 {
 	return p.hash
@@ -75,6 +79,7 @@ func (p *pair) Element() interface{} {
 	}
 	//类型转转
 	// pointer类型  --->  *interface{}表示interface的指针类型 --->再将interface{}指针类型转换为值类型
+	//将Pointer类型指针转换为普通类型指针，然后取值
 	return *(*interface{})(pointer)
 }
 
@@ -88,6 +93,7 @@ func (p *pair) SetElement(element interface{}) error {
 	return nil
 }
 
+
 func (p *pair) Next() Pair {
 	pointer := atomic.LoadPointer(&p.next)
 	if pointer == nil {
@@ -98,6 +104,7 @@ func (p *pair) Next() Pair {
 	//故可以将*pair类型赋值给Pair接口
 	return (*pair)(pointer)
 }
+
 
 func (p *pair) SetNext(nextPair Pair) error {
 	//如果传进来的newPair空，那么就将pair的next存储为nil
@@ -114,15 +121,18 @@ func (p *pair) SetNext(nextPair Pair) error {
 	return nil
 }
 
+
 // Copy 会生成一个当前键-元素对的副本并返回。
 func (p *pair) Copy() Pair {
 	pCopy, _ := newPair(p.Key(), p.Element())
 	return pCopy
 }
 
+
 func (p *pair) String() string {
 	return p.genString(false)
 }
+
 
 // genString 用于生成并返回当前键-元素对的字符串形式。
 func (p *pair) genString(nextDetail bool) string {
@@ -158,3 +168,4 @@ func (p *pair) genString(nextDetail bool) string {
 	//将buffer转换成string
 	return buf.String()
 }
+
