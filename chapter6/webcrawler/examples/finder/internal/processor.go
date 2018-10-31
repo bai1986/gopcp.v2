@@ -11,7 +11,6 @@ import (
 )
 
 // genItemProcessors 用于生成条目处理器。
-//ProcessItem 是个函数类型
 func genItemProcessors(dirPath string) []module.ProcessItem {
 	savePicture := func(item module.Item) (result module.Item, err error) {
 		if item == nil {
@@ -29,7 +28,6 @@ func genItemProcessors(dirPath string) []module.ProcessItem {
 		}
 		readCloser, ok := reader.(io.ReadCloser)
 		if ok {
-			//如果reader是io.ReadCloser类型，那么savePicture执行结束前关闭readerCloser
 			defer readCloser.Close()
 		}
 		v = item["name"]
@@ -39,15 +37,12 @@ func genItemProcessors(dirPath string) []module.ProcessItem {
 		}
 		// 创建图片文件。
 		fileName := name
-		//不能简单进行字符串拼接 absDirPath和fileName 因为每个操作系统平台文件路径根式是不一样的
 		filePath := filepath.Join(absDirPath, fileName)
-		//创建路径文件
 		file, err := os.Create(filePath)
 		if err != nil {
 			return nil, fmt.Errorf("couldn't create file: %s (path: %s)",
 				err, filePath)
 		}
-		//在函数结束前关闭file
 		defer file.Close()
 		// 写图片文件。
 		_, err = io.Copy(file, reader)

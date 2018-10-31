@@ -1,4 +1,5 @@
 package testhelper
+
 import (
 	"bufio"
 	"bytes"
@@ -61,9 +62,11 @@ func (comm *TCPComm) Call(req []byte, timeoutNS time.Duration) ([]byte, error) {
 	return read(conn, DELIM)
 }
 
+
 // CheckResp 会检查响应内容。
 func (comm *TCPComm) CheckResp(
 	rawReq loadgenlib.RawReq, rawResp loadgenlib.RawResp) *loadgenlib.CallResult {
+
 	var commResult loadgenlib.CallResult
 	commResult.ID = rawResp.ID
 	commResult.Req = rawReq
@@ -132,6 +135,23 @@ func read(conn net.Conn, delim byte) ([]byte, error) {
 	return buffer.Bytes(), nil
 }
 
+func readd(conn net.Conn, delim byte) ([]byte, error) {
+	readBytes := make([]byte,1)
+	var buffer bytes.Buffer
+	for {
+		_, err := conn.Read(readBytes)
+		if err != nil {
+			return nil, err
+		}
+		readByte := readBytes[0]
+		if readByte == delim {
+			break
+		}
+		buffer.WriteByte(readByte)
+	}
+	return buffer.Bytes(), nil
+}
+
 // write 会向连接写数据，并在最后追加参数delim代表的字节。
 func write(conn net.Conn, content []byte, delim byte) (int, error) {
 	writer := bufio.NewWriter(conn)
@@ -144,3 +164,5 @@ func write(conn net.Conn, content []byte, delim byte) (int, error) {
 	}
 	return n, err
 }
+
+

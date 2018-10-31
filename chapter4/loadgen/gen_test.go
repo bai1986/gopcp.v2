@@ -11,7 +11,6 @@ import (
 var printDetail = false
 
 func TestStart(t *testing.T) {
-
 	// 初始化服务器。
 	server := helper.NewTCPServer()
 	defer server.Close()
@@ -26,12 +25,19 @@ func TestStart(t *testing.T) {
 		t.FailNow()
 	}
 
+	if err != nil {
+		//打印错误信息 并使当前测试立即失败
+		t.Fatalf("TCP server startup failing ", serverAddr)
+		//结束接下来的测试
+		t.FailNow()
+	}
+
 	// 初始化载荷发生器。
 	pset := ParamSet{
 		Caller:     helper.NewTCPComm(serverAddr),
-		TimeoutNS:  50 * time.Millisecond,
-		LPS:        uint32(1000),
-		DurationNS: 10 * time.Second,
+		TimeoutNS:  50 * time.Millisecond, //响应超时时间
+		LPS:        uint32(1000), //每秒载荷量
+		DurationNS: 10 * time.Second, //负载持续时间
 		ResultCh:   make(chan *loadgenlib.CallResult, 50),
 	}
 	t.Logf("Initialize load generator (timeoutNS=%v, lps=%d, durationNS=%v)...",
@@ -74,6 +80,7 @@ func TestStart(t *testing.T) {
 	//计算tps（每秒有效处理载荷量）
 	tps := float64(successCount) / float64(pset.DurationNS/1e9)
 	t.Logf("Loads per second: %d; Treatments per second: %f.\n", pset.LPS, tps)
+	t.Logf("loads per second: %d; treatments per second: %f.\n", pset.LPS,tps)
 }
 
 func TestStop(t *testing.T) {

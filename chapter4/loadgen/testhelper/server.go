@@ -1,4 +1,5 @@
 package testhelper
+
 import (
 	"bytes"
 	"encoding/json"
@@ -27,6 +28,7 @@ type ServerResp struct {
 	Result  int
 	Err     error
 }
+
 //根据操作数  操作符计算结果值
 func op(operands []int, operator string) int {
 	var result int
@@ -89,7 +91,28 @@ func genFormula(operands []int, operator string, result int, equal bool) string 
 	return buff.String()
 }
 
+func genFormulaa(operands []int, opeartor string, result int, equal bool) string {
+	var buff bytes.Buffer
+	n := len(operands)
+	for i :=0; i<n ;i++ {
+		if i >0 {
+			buff.WriteString(" ")
+			buff.WriteString(opeartor)
+			buff.WriteString(" ")
+		}
+		buff.WriteString(strconv.Itoa(operands[i]))
+	}
+	if equal {
+		buff.WriteString(" = ")
+	} else {
+		buff.WriteString(" != ")
+	}
+	buff.WriteString(strconv.Itoa(result))
+	return buff.String()
+}
+
 // reqHandler 会把参数sresp代表的请求转换为数据并发送给连接。
+
 func reqHandler(conn net.Conn) {
 	var errMsg string
 	var sresp ServerResp
@@ -151,6 +174,18 @@ func (server *TCPServer) init(addr string) error {
 	return nil
 }
 
+func (server *TCPServer) initt(addr string) error {
+	if !atomic.CompareAndSwapUint32(&server.active, 0, 1) {
+		return nil
+	}
+	ln , err := net.Listen("tcp", addr)
+	if err != nil {
+		atomic.StoreUint32(&server.active, 0)
+	}
+	server.listener = ln
+	return nil
+}
+
 // Listen 会启动对指定网络地址的监听。
 func (server *TCPServer) Listen(addr string) error {
 	err := server.init(addr)
@@ -179,6 +214,31 @@ func (server *TCPServer) Listen(addr string) error {
 	return nil
 }
 
+func (server *TCPServer) Listenn(addr string) error {
+	err := server.init(addr)
+	if err != nil {
+		return err
+	}
+	go func() {
+		for {
+			if atomic.LoadUint32(&server.active) != 1 {
+				break
+			}
+			conn, err := server.listener.Accept()
+			if err != nil {
+				if atomic.LoadUint32(&server.active) == 1 {
+					logger.Errorf("Server: Request Accoption Error: %s\n", err)
+				} else {
+					logger.Warnf("Server: Broken accoption because of closed network connection.")
+				}
+				continue
+			}
+			go reqHandler(conn)
+		}
+	}()
+	return nil
+}
+
 // Close 会关闭服务器。
 func (server *TCPServer) Close() bool {
 	if !atomic.CompareAndSwapUint32(&server.active, 1, 0) {
@@ -187,3 +247,4 @@ func (server *TCPServer) Close() bool {
 	server.listener.Close()
 	return true
 }
+

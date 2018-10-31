@@ -6,6 +6,7 @@ import (
 	"os"
 	"sync"
 	"sync/atomic"
+	"time"
 )
 
 // Data 代表数据的类型。
@@ -55,6 +56,7 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取并更新读偏移量
 	var offset int64
+	//自旋锁
 	for {
 		//在32位计算机架构机器上写入一个64位的整数，会存在并发安全的隐患
 		//比如有另个go同时在修改df.roffset的值，可能会导致读取操作不正确
@@ -62,6 +64,7 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 		if atomic.CompareAndSwapInt64(&df.roffset, offset, (offset + int64(df.dataLen))) {
 			break
 		}
+		time.Sleep(1 * time.Millisecond)
 	}
 
 	//读取一个数据块
@@ -86,11 +89,13 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	// 读取并更新写偏移量
 	var offset int64
+	//自旋锁
 	for {
 		offset = atomic.LoadInt64(&df.woffset)
 		if atomic.CompareAndSwapInt64(&df.woffset, offset, (offset + int64(df.dataLen))) {
 			break
 		}
+		time.Sleep(1 * time.Millisecond)
 	}
 
 	//写入一个数据块
@@ -104,6 +109,7 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	df.fmutex.Lock()
 	defer df.fmutex.Unlock()
 	_, err = df.f.Write(bytes)
+	//通知与条件变量关联的读锁，可以去唤醒一个GO
 	df.rcond.Signal()
 	return
 }

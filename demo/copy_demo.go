@@ -19,4 +19,7 @@ func main() {
 	fmt.Println("")
 	fmt.Println("slice1:",slice1)
 	fmt.Println("slice2:",slice2)
+
+	fmt.Println("nil == nil")
+	fmt.Println(nil == nil )
 }

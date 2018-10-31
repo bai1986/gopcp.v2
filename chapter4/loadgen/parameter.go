@@ -1,4 +1,5 @@
 package loadgen
+
 import (
 	"bytes"
 	"errors"

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
 	"gopcp.v2/helper/log"
 )
 
@@ -30,19 +31,16 @@ func checkDirPath(dirPath string) (absDirPath string, err error) {
 		return
 	}
 	if dir == nil {
-		//创建路径
 		err = os.MkdirAll(absDirPath, 0700)
 		if err != nil && !os.IsExist(err) {
 			return
 		}
 	} else {
 		var fileInfo os.FileInfo
-		//获取路径信息
 		fileInfo, err = dir.Stat()
 		if err != nil {
 			return
 		}
-		//如果不是路径
 		if !fileInfo.IsDir() {
 			err = fmt.Errorf("not directory: %s", absDirPath)
 			return

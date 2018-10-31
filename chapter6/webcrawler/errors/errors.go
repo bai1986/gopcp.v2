@@ -9,8 +9,6 @@ import (
 // ErrorType 代表错误类型。
 type ErrorType string
 
-type ErrorTyp string
-
 // 错误类型常量。
 const (
 	// ERROR_TYPE_DOWNLOADER 代表下载器错误。
@@ -23,13 +21,6 @@ const (
 	ERROR_TYPE_SCHEDULER ErrorType = "scheduler error"
 )
 
-const (
-	ERROR_TYPE_DOWNLOADERR ErrorTyp = "dounloader error"
-	ERROR_TYPE_ANALYZERR ErrorTyp = "analyzer error"
-	ERROR_TYPE_PIPELINEE ErrorTyp = "pipeline error"
-	ERROR_TYPE_SCHEDUERR ErrorTyp = "scheduler error"
-)
-
 // CrawlerError 代表爬虫错误的接口类型。
 type CrawlerError interface {
 	// Type 用于获得错误的类型。
@@ -38,10 +29,6 @@ type CrawlerError interface {
 	Error() string
 }
 
-type CrawlerErrorr interface {
-	Type() ErrorTyp
-	Error() string
-}
 // myCrawlerError 代表爬虫错误的实现类型。
 type myCrawlerError struct {
 	// errType 代表错误的类型。
@@ -49,12 +36,6 @@ type myCrawlerError struct {
 	// errMsg 代表错误的提示信息。
 	errMsg string
 	// fullErrMsg 代表完整的错误提示信息。
-	fullErrMsg string
-}
-
-type myCrawlerErrorr struct {
-	errType ErrorTyp
-	errMsg string
 	fullErrMsg string
 }
 
@@ -66,37 +47,16 @@ func NewCrawlerError(errType ErrorType, errMsg string) CrawlerError {
 	}
 }
 
-func NewCrawlerErrorr(errType ErrorTyp, errMsg string) CrawlerErrorr {
-	return &myCrawlerErrorr{
-		errType:errType,
-		errMsg:strings.TrimSpace(errMsg),
-	}
-}
 // NewCrawlerErrorBy 用于根据给定的错误值创建一个新的爬虫错误值。
 func NewCrawlerErrorBy(errType ErrorType, err error) CrawlerError {
 	return NewCrawlerError(errType, err.Error())
-}
-
-func NewCrawlerErrorByy(errType ErrorTyp,err error) CrawlerErrorr {
-	return NewCrawlerErrorr(errType,err.Error())
 }
 
 func (ce *myCrawlerError) Type() ErrorType {
 	return ce.errType
 }
 
-func (ce *myCrawlerErrorr) Type() ErrorTyp {
-	return ce.errType
-}
-
 func (ce *myCrawlerError) Error() string {
-	if ce.fullErrMsg == "" {
-		ce.genFullErrMsg()
-	}
-	return ce.fullErrMsg
-}
-
-func (ce *myCrawlerErrorr) Error() string {
 	if ce.fullErrMsg == "" {
 		ce.genFullErrMsg()
 	}
@@ -116,23 +76,8 @@ func (ce *myCrawlerError) genFullErrMsg() {
 	return
 }
 
-func (ce *myCrawlerErrorr) genFullErrMsg() {
-	var buf bytes.Buffer
-	buf.WriteString("crawler error:")
-	if ce.errType != "" {
-		buf.WriteString(string(ce.errType))
-		buf.WriteString(": ")
-	}
-	buf.WriteString(ce.errMsg)
-	ce.fullErrMsg = fmt.Sprintf("%s", buf.String())
-}
-
 // IllegalParameterError 代表非法的参数的错误类型。
 type IllegalParameterError struct {
-	msg string
-}
-
-type IllegalParameterErrorr struct {
 	msg string
 }
 
@@ -144,17 +89,6 @@ func NewIllegalParameterError(errMsg string) IllegalParameterError {
 	}
 }
 
-func NewIllegalParameterErrorr(errMsg string) IllegalParameterErrorr {
-	return IllegalParameterErrorr{
-		msg: fmt.Sprintf("illegal paramer: %s",strings.TrimSpace(errMsg)),
-	}
-}
-
-//实现了error接口
 func (ipe IllegalParameterError) Error() string {
-	return ipe.msg
-}
-
-func (ipe IllegalParameterErrorr) Error() string {
 	return ipe.msg
 }

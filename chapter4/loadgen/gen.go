@@ -135,6 +135,7 @@ func (gen *myGenerator) asyncCall() {
 		rawReq := gen.caller.BuildReq()
 		// 调用状态：0-未调用或调用中；1-调用完成；2-调用超时。
 		var callStatus uint32
+		//AfterFunc是新开一个gorotiune执行func
 		timer := time.AfterFunc(gen.timeoutNS, func() {
 			//CompareAndSwapUint32返回一个bool类型值，用以表示比较并交换是否成功,true表示交换OK
 			//如果未成功，就说明载荷响应接收操作已先完成，忽略超时处理
@@ -157,8 +158,7 @@ func (gen *myGenerator) asyncCall() {
 		if !atomic.CompareAndSwapUint32(&callStatus, 0, 1) {
 			return
 		}
-		//已超时
-		//停止定时器
+		//停止定时器，一定要在未超时前停止定时器
 		timer.Stop()
 		var result *lib.CallResult
 		//检查响应结果
@@ -222,6 +222,7 @@ func (gen *myGenerator) prepareToStop(ctxError error) {
 }
 
 // genLoad 会产生载荷并向承受方发送。以节流阀作为参数
+//在荷载发生器启动后，该方法会一直运行
 func (gen *myGenerator) genLoad(throttle <-chan time.Time) {
 	for {
 		//这里<-gen.ctx.Done()有两个，是为了避免在第二个select中两种信号同时到达然后会随机选择一个
@@ -253,6 +254,7 @@ func (gen *myGenerator) Start() bool {
 	// 检查是否具备可启动的状态，顺便设置状态为正在启动
 	if !atomic.CompareAndSwapUint32(
 		&gen.status, lib.STATUS_ORIGINAL, lib.STATUS_STARTING) {
+			//重新启动
 		if !atomic.CompareAndSwapUint32(
 			&gen.status, lib.STATUS_STOPPED, lib.STATUS_STARTING) {
 			return false

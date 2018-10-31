@@ -25,21 +25,3 @@ func TestErrorGenError(t *testing.T) {
 			expectedErrMsg, ce.Error())
 	}
 }
-
-func TestErrorGenErrorr(t *testing.T) {
-	simpleErrMsg := "testing error"
-	expectedErrType := errors.ERROR_TYPE_ANALYZERR
-	err := genErrorr(simpleErrMsg)
-	ce, ok := err.(errors.CrawlerErrorr)
-	if !ok {
-		t.Fatalf("inconsistent error type expected : %T, actual :%T",
-			errors.NewCrawlerErrorr("",""),err)
-	}
-	if ce.Type() != expectedErrType {
-		t.Fatalf("inconsistent error type string: expected: %q,actual:%q",expectedErrType,ce.Type())
-	}
-	expectedErrMsg := "crawler error:analyzer error:"+simpleErrMsg
-	if ce.Error() != expectedErrMsg {
-		t.Fatalf("inconsistent error message :expected: %q,actual: %q",expectedErrMsg,ce.Error())
-	}
-}

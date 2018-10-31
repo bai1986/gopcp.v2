@@ -50,6 +50,7 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 	df := &myDataFile{f: f, dataLen: dataLen}
 	//针对读写锁的读操作实施信号通知
 	//sync.NewCond(&df.wmutex)
+	//RLocker()获取的是读锁
 	df.rcond = sync.NewCond(df.fmutex.RLocker())
 	return df, nil
 }

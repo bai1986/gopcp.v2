@@ -55,6 +55,7 @@ func NewDataFile(path string, dataLen uint32) (DataFile, error) {
 
 func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	// 读取并更新读偏移量。
+	//一个读操作进来先更新偏移量，相当于占一个坑，那么其他go也调用Read时就不会和当前go冲突，从而去读下一个数据块
 	var offset int64
 	df.rmutex.Lock()
 	offset = df.roffset
@@ -62,6 +63,7 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	df.rmutex.Unlock()
 
 	//读取一个数据块。
+	//根据当前Read要读取的偏移量获取区段号
 	rsn = offset / int64(df.dataLen)
 	bytes := make([]byte, df.dataLen)
 	for {
@@ -109,6 +111,7 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	df.fmutex.Lock()
 	//对读写锁进行写解锁
 	defer df.fmutex.Unlock()
+	//将数据在互斥锁环境下写入文件
 	_, err = df.f.Write(bytes)
 	return
 }

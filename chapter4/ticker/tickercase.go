@@ -25,7 +25,7 @@ func main() {
 		if sum > 30 {
 			fmt.Printf("Got: %v\n", sum)
 			//下面的停止断续器没有用
-			//ticker.Stop()
+			ticker.Stop()
 			break
 		}
 	}

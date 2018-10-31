@@ -6,31 +6,9 @@ import (
 )
 
 var regexpForIP = regexp.MustCompile(`((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d))`)
-//MustCompile()必须完成正则编译，否则panic
-var regexpForIPP = regexp.MustCompile(`((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d))`)
 
 var regexpForDomains = []*regexp.Regexp{
 	// *.xx or *.xxx.xx
-	regexp.MustCompile(`\.(com|com\.\w{2})$`),
-	regexp.MustCompile(`\.(gov|gov\.\w{2})$`),
-	regexp.MustCompile(`\.(net|net\.\w{2})$`),
-	regexp.MustCompile(`\.(org|org\.\w{2})$`),
-	// *.xx
-	regexp.MustCompile(`\.me$`),
-	regexp.MustCompile(`\.biz$`),
-	regexp.MustCompile(`\.info$`),
-	regexp.MustCompile(`\.name$`),
-	regexp.MustCompile(`\.mobi$`),
-	regexp.MustCompile(`\.so$`),
-	regexp.MustCompile(`\.asia$`),
-	regexp.MustCompile(`\.tel$`),
-	regexp.MustCompile(`\.tv$`),
-	regexp.MustCompile(`\.cc$`),
-	regexp.MustCompile(`\.co$`),
-	regexp.MustCompile(`\.\w{2}$`),
-}
-
-var regexpForDomainss = []*regexp.Regexp{
 	regexp.MustCompile(`\.(com|com\.\w{2})$`),
 	regexp.MustCompile(`\.(gov|gov\.\w{2})$`),
 	regexp.MustCompile(`\.(net|net\.\w{2})$`),
@@ -79,35 +57,4 @@ func getPrimaryDomain(host string) (string, error) {
 		return host[pdIndex:], nil
 	}
 	return "", genError("unrecognized host")
-}
-
-//用于获取给定主机名的主域名
-func getPrimaryDomainn(host string) (string, error) {
-	host = strings.TrimSpace(host)
-	if host == "" {
-		return "", genError("empty host")
-	}
-	if regexpForIPP.MatchString(host) {
-		return host, nil
-	}
-	var suffixIndex int
-	for _, re := range regexpForDomains {
-		pos := re.FindStringIndex(host)
-		if pos != nil {
-			suffixIndex = pos[0]
-			break
-		}
-	}
-	if suffixIndex > 0 {
-		var pdIndex int
-		firstPart := host[:suffixIndex]
-		index := strings.LastIndex(firstPart,".")
-		if index <0 {
-			pdIndex = 0
-		} else {
-			pdIndex = index + 1
-		}
-		return host[pdIndex:],nil
-	}
-	return "", genError("unrecoginzed host")
 }

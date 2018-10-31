@@ -7,17 +7,8 @@ func genError(errMsg string) error {
 	return errors.NewCrawlerError(errors.ERROR_TYPE_ANALYZER, errMsg)
 }
 
-//用于生成爬虫错误
-func genErrorr(errMsg string) error {
-	return errors.NewCrawlerErrorr(errors.ERROR_TYPE_ANALYZERR,errMsg)
-}
-
 // genParameterError 用于生成爬虫参数错误值。
 func genParameterError(errMsg string) error {
 	return errors.NewCrawlerErrorBy(errors.ERROR_TYPE_ANALYZER,
 		errors.NewIllegalParameterError(errMsg))
-}
-//用于生成爬虫参数的错误值
-func genParameterErrorr(errMsg string) error {
-	return errors.NewCrawlerErrorByy(errors.ERROR_TYPE_ANALYZERR,errors.NewIllegalParameterErrorr(errMsg))
 }
