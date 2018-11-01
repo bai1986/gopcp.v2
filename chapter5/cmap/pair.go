@@ -93,7 +93,6 @@ func (p *pair) SetElement(element interface{}) error {
 	return nil
 }
 
-
 func (p *pair) Next() Pair {
 	pointer := atomic.LoadPointer(&p.next)
 	if pointer == nil {
@@ -104,7 +103,6 @@ func (p *pair) Next() Pair {
 	//故可以将*pair类型赋值给Pair接口
 	return (*pair)(pointer)
 }
-
 
 func (p *pair) SetNext(nextPair Pair) error {
 	//如果传进来的newPair空，那么就将pair的next存储为nil

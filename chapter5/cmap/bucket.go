@@ -22,9 +22,9 @@ type Bucket interface {
 	// Clear 会清空当前散列桶。
 	// 若在调用此方法前已经锁定lock，则不要把lock传入！否则必须传入对应的lock！
 	Clear(lock sync.Locker)
-	// Size 会返回当前散列桶的尺寸。
+	// Size 会返回当前 散列桶的 尺寸。
 	Size() uint64
-	// String 会返回当前散列桶的字符串表示形式。
+	// String 会返回当前 散列桶的 字符串表示形式。
 	String() string
 }
 
@@ -39,9 +39,10 @@ type bucket struct {
 // 由于原子值不能存储nil，所以当散列桶空时用此符占位。
 var placeholder Pair = &pair{}
 
-// newBucket 会创建一个Bucket类型的实例。
+// newBucket 会创建一个 Bucket 类型的实例。
 func newBucket() Bucket {
 	b := &bucket{}
+	//存储占位值，也确立原子值存储类型
 	b.firstValue.Store(placeholder)
 	return b
 }
@@ -87,6 +88,7 @@ func (b *bucket) Put(p Pair, lock sync.Locker) (bool, error) {
 	return true, nil
 }
 
+//根据key遍历单链表，找到pair
 func (b *bucket) Get(key string) Pair {
 	firstPair := b.GetFirstPair()
 	if firstPair == nil {
@@ -101,6 +103,7 @@ func (b *bucket) Get(key string) Pair {
 }
 
 func (b *bucket) GetFirstPair() Pair {
+	//查找firstValue里面是否真正存储有元素值，占位值不算
 	if v := b.firstValue.Load(); v == nil {
 		return nil
 	} else if p, ok := v.(Pair); !ok || p == placeholder {
@@ -176,7 +179,7 @@ func (b *bucket) Clear(lock sync.Locker) {
 		defer lock.Unlock()
 	}
 	atomic.StoreUint64(&b.size, 0)
-	//站位，保证下一次重新使用不会panic
+	//占位，保证下一次重新使用不会panic
 	b.firstValue.Store(placeholder)
 }
 

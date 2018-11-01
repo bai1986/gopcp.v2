@@ -75,7 +75,7 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	for {
 		_, err = df.f.ReadAt(bytes, offset)
 		if err != nil {
-			if err == io.EOF {
+			for err == io.EOF {
 				df.rcond.Wait()
 				continue
 			}

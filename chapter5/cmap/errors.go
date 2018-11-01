@@ -6,12 +6,14 @@ import "fmt"
 type IllegalParameterError struct {
 	msg string
 }
+
 // newIllegalParameterError 会创建一个IllegalParameterError类型的实例。
 func newIllegalParameterError(errMsg string) IllegalParameterError {
 	return IllegalParameterError{
 		msg: fmt.Sprintf("concurrent map: illegal parameter: %s", errMsg),
 	}
 }
+
 //实现了Error接口
 func (ipe IllegalParameterError) Error() string {
 	return ipe.msg

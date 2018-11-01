@@ -40,6 +40,7 @@ type segment struct {
 // NewSegment 会创建一个Segment类型的实例。
 func newSegment(
 	bucketNumber int, pairRedistributor PairRedistributor) Segment {
+
 	if bucketNumber <= 0 {
 		bucketNumber = DEFAULT_BUCKET_NUMBER //16
 	}
@@ -61,16 +62,17 @@ func newSegment(
 }
 
 func (s *segment) Put(p Pair) (bool, error) {
-	//对散列段上锁
+	// 对散列段上锁
 	s.lock.Lock()
-	//根据Pair哈希值找到一个散列桶
+	// 根据Pair哈希值找到一个散列桶
+	// 放入数据时随便分布，依据是key的哈希值取余桶的数量
 	b := s.buckets[int(p.Hash()%uint64(s.bucketsLen))]
-	//把Pair放入散列桶
+	// 把Pair放入散列桶
 	ok, err := b.Put(p, nil)
 	if ok {
-		//pairTotal总数原子加1
+		//pairTotal 总数原子加1
 		newTotal := atomic.AddUint64(&s.pairTotal, 1)
-		//触发散列段里面的散列桶K-V再分布
+		//触发散列段里面的散列桶K-V再分布，分布参数是散列段内键值对总数，桶的大小
 		s.redistribute(newTotal, b.Size())
 	}
 	//散列段解锁
@@ -79,11 +81,13 @@ func (s *segment) Put(p Pair) (bool, error) {
 }
 
 func (s *segment) Get(key string) Pair {
+	//内部调用hash取值方法
 	return s.GetWithHash(key, hash(key))
 }
 
 func (s *segment) GetWithHash(key string, keyHash uint64) Pair {
 	s.lock.Lock()
+	// 根据哈希值取余散列桶数量
 	b := s.buckets[int(keyHash%uint64(s.bucketsLen))]
 	s.lock.Unlock()
 	return b.Get(key)
@@ -91,7 +95,9 @@ func (s *segment) GetWithHash(key string, keyHash uint64) Pair {
 
 func (s *segment) Delete(key string) bool {
 	s.lock.Lock()
+	// 根据哈希值取余散列桶数量
 	b := s.buckets[int(hash(key)%uint64(s.bucketsLen))]
+	//lock参数为nil时，表示外部自行保证并发安全
 	ok := b.Delete(key, nil)
 	if ok {
 		//pairTotal原子减1
@@ -120,9 +126,9 @@ func (s *segment) redistribute(pairTotal uint64, bucketSize uint64) (err error) 
 			}
 		}
 	}()
-	//根据K-V总数和散列桶总数计算更新阀值
+	//根据K-V总数   和  散列桶总数计算更新阀值
 	s.pairRedistributor.UpdateThreshold(pairTotal, s.bucketsLen)
-	//根据K-V总数和散列桶数量检查散列桶状态
+	//根据K-V总数和散列桶数量检查   散列桶状态
 	bucketStatus := s.pairRedistributor.CheckBucketStatus(pairTotal, bucketSize)
 	//根据散列桶状态和散列桶切片重新分布K-V
 	newBuckets, changed := s.pairRedistributor.Redistribe(bucketStatus, s.buckets)

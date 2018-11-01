@@ -1,7 +1,7 @@
 package cmap
 
 // hash 用于计算给定字符串的哈希值的整数形式。
-// 本函数实现了BKDR哈希算法。
+// 本函数实现了BKDR 哈希算法。
 func hash(str string) uint64 {
 	seed := uint64(13131)
 	var hash uint64

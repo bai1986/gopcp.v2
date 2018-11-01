@@ -73,7 +73,7 @@ func (df *myDataFile) Read() (rsn int64, d Data, err error) {
 	for {
 		_, err = df.f.ReadAt(bytes, offset)
 		if err != nil {
-			if err == io.EOF {
+			for err == io.EOF {
 				//一定要在调用rcond.Wait()方法之前锁定与之关联的读锁，否则会引发不可恢复的panic
 				//放弃尝试读锁定，等待通知
 				df.rcond.Wait() //Wait()方法返回之前会重新锁定与之关联的那个读锁
@@ -95,7 +95,7 @@ func (df *myDataFile) Write(d Data) (wsn int64, err error) {
 	df.woffset += int64(df.dataLen)
 	df.wmutex.Unlock()
 
-	//写入一个数据块。
+	//写入一个数据块。wsn表示当开始写入的区段号
 	wsn = offset / int64(df.dataLen)
 	var bytes []byte
 	if len(d) > int(df.dataLen) {

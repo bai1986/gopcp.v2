@@ -3,6 +3,7 @@ package cmap
 import (
 	"math"
 	"sync/atomic"
+	"fmt"
 )
 
 // ConcurrentMap 代表并发安全的字典的接口。
@@ -24,7 +25,7 @@ type ConcurrentMap interface {
 	Len() uint64
 }
 
-// myConcurrentMap 代表ConcurrentMap接口的实现类型。
+// myConcurrentMap 代表 ConcurrentMap  接口的实现类型。
 type myConcurrentMap struct {
 	concurrency int  //并发量
 	segments    []Segment  //散列段
@@ -46,6 +47,7 @@ func NewConcurrentMap(
 	cmap.concurrency = concurrency
 	cmap.segments = make([]Segment, concurrency) //散列段
 	for i := 0; i < concurrency; i++ {
+		//初始化每个散列段
 		cmap.segments[i] =
 			newSegment(DEFAULT_BUCKET_NUMBER, pairRedistributor) //一个散列段默认有16个散列桶
 	}
@@ -57,6 +59,9 @@ func (cmap *myConcurrentMap) Concurrency() int {
 }
 
 func (cmap *myConcurrentMap) Put(key string, element interface{}) (bool, error) {
+	if element == nil {
+		return false, fmt.Errorf("element is nil")
+	}
 	p, err := newPair(key, element)
 	if err != nil {
 		return false, err
