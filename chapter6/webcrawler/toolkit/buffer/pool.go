@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
-
 	"gopcp.v2/chapter6/webcrawler/errors"
 )
 
@@ -52,8 +51,8 @@ type myPool struct {
 }
 
 // NewPool 用于创建一个数据缓冲池。
-// 参数bufferCap代表池内缓冲器的统一容量。
-// 参数maxBufferNumber代表池中最多包含的缓冲器的数量。
+// 参数bufferCap  代表池内缓冲器的统一容量。
+// 参数maxBufferNumber  代表池中最多包含的缓冲器的数量。
 func NewPool(
 	bufferCap uint32,
 	maxBufferNumber uint32) (Pool, error) {
@@ -117,13 +116,17 @@ func (pool *myPool) putData(
 	defer func() {
 		pool.rwlock.RLock()
 		if pool.Closed() {
+			//缓冲池关闭并不代表里面就没有缓冲器了
+			//缓冲池中缓冲器数量减1
 			atomic.AddUint32(&pool.bufferNumber, ^uint32(0))
 			err = ErrClosedBufferPool
 		} else {
+			//归还缓冲器
 			pool.bufCh <- buf
 		}
 		pool.rwlock.RUnlock()
 	}()
+
 	ok, err = buf.Put(datum)
 	if ok {
 		atomic.AddUint64(&pool.total, 1)
@@ -137,9 +140,11 @@ func (pool *myPool) putData(
 	// 如果尝试向缓冲器放入数据的失败次数达到阈值，
 	// 并且池中缓冲器的数量未达到最大值，
 	// 那么就尝试创建一个新的缓冲器，先放入数据再把它放入池。
+	//快速检测
 	if *count >= maxCount &&
 		pool.BufferNumber() < pool.MaxBufferNumber() {
 		pool.rwlock.Lock()
+		//再次检测
 		if pool.BufferNumber() < pool.MaxBufferNumber() {
 			if pool.Closed() {
 				pool.rwlock.Unlock()
@@ -200,6 +205,7 @@ func (pool *myPool) getData(
 		}
 		pool.rwlock.RUnlock()
 	}()
+
 	datum, err = buf.Get()
 	if datum != nil {
 		atomic.AddUint64(&pool.total, ^uint64(0))

@@ -2,7 +2,6 @@ package pipeline
 
 import (
 	"fmt"
-
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/chapter6/webcrawler/module/stub"
 	"gopcp.v2/helper/log"
@@ -16,6 +15,7 @@ func New(
 	mid module.MID,
 	itemProcessors []module.ProcessItem,
 	scoreCalculator module.CalculateScore) (module.Pipeline, error) {
+
 	moduleBase, err := stub.NewModuleInternal(mid, scoreCalculator)
 	if err != nil {
 		return nil, err
@@ -57,8 +57,10 @@ func (pipeline *myPipeline) ItemProcessors() []module.ProcessItem {
 }
 
 func (pipeline *myPipeline) Send(item module.Item) []error {
+
 	pipeline.ModuleInternal.IncrHandlingNumber()
 	defer pipeline.ModuleInternal.DecrHandlingNumber()
+
 	pipeline.ModuleInternal.IncrCalledCount()
 	var errs []error
 	if item == nil {
@@ -73,6 +75,7 @@ func (pipeline *myPipeline) Send(item module.Item) []error {
 		processedItem, err := processor(currentItem)
 		if err != nil {
 			errs = append(errs, err)
+			//快速失败判定
 			if pipeline.failFast {
 				break
 			}

@@ -6,7 +6,6 @@ import (
 	"net/url"
 	"path"
 	"strings"
-
 	"github.com/PuerkitoBio/goquery"
 	"gopcp.v2/chapter6/webcrawler/module"
 )

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"sync"
 	"sync/atomic"
-
 	"gopcp.v2/chapter6/webcrawler/errors"
 )
 

@@ -2,7 +2,6 @@ package downloader
 
 import (
 	"net/http"
-
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/chapter6/webcrawler/module/stub"
 	"gopcp.v2/helper/log"
@@ -38,8 +37,10 @@ type myDownloader struct {
 }
 
 func (downloader *myDownloader) Download(req *module.Request) (*module.Response, error) {
+
 	downloader.ModuleInternal.IncrHandlingNumber()
 	defer downloader.ModuleInternal.DecrHandlingNumber()
+
 	downloader.ModuleInternal.IncrCalledCount()
 	if req == nil {
 		return nil, genParameterError("nil request")
@@ -50,6 +51,7 @@ func (downloader *myDownloader) Download(req *module.Request) (*module.Response,
 	}
 	downloader.ModuleInternal.IncrAcceptedCount()
 	logger.Infof("Do the request (URL: %s, depth: %d)... \n", httpReq.URL, req.Depth())
+
 	httpResp, err := downloader.httpClient.Do(httpReq)
 	if err != nil {
 		return nil, err

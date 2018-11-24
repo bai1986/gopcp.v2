@@ -3,7 +3,6 @@ package cookie
 import (
 	"net/http"
 	"net/http/cookiejar"
-
 	"golang.org/x/net/publicsuffix"
 )
 

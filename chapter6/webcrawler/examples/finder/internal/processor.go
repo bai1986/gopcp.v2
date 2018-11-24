@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-
 	"gopcp.v2/chapter6/webcrawler/module"
 )
 

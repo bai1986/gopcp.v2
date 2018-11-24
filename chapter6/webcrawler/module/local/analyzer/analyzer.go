@@ -2,7 +2,6 @@ package analyzer
 
 import (
 	"fmt"
-
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/chapter6/webcrawler/module/stub"
 	"gopcp.v2/chapter6/webcrawler/toolkit/reader"
@@ -56,8 +55,10 @@ func (analyzer *myAnalyzer) RespParsers() []module.ParseResponse {
 
 func (analyzer *myAnalyzer) Analyze(
 	resp *module.Response) (dataList []module.Data, errorList []error) {
+
 	analyzer.ModuleInternal.IncrHandlingNumber()
 	defer analyzer.ModuleInternal.DecrHandlingNumber()
+	//被调用次数加1
 	analyzer.ModuleInternal.IncrCalledCount()
 	if resp == nil {
 		errorList = append(errorList,
@@ -82,6 +83,7 @@ func (analyzer *myAnalyzer) Analyze(
 			genParameterError("nil HTTP request URL"))
 		return
 	}
+	//当参数没有错误，开始接受处理
 	analyzer.ModuleInternal.IncrAcceptedCount()
 	respDepth := resp.Depth()
 	logger.Infof("Parse the response (URL: %s, depth: %d)... \n",
@@ -91,6 +93,7 @@ func (analyzer *myAnalyzer) Analyze(
 	if httpResp.Body != nil {
 		defer httpResp.Body.Close()
 	}
+	//创建一个多重读取器
 	multipleReader, err := reader.NewMultipleReader(httpResp.Body)
 	if err != nil {
 		errorList = append(errorList, genError(err.Error()))
@@ -98,6 +101,7 @@ func (analyzer *myAnalyzer) Analyze(
 	}
 	dataList = []module.Data{}
 	for _, respParser := range analyzer.respParsers {
+		//从多重读取器拿到读取器
 		httpResp.Body = multipleReader.Reader()
 		pDataList, pErrorList := respParser(httpResp, respDepth)
 		if pDataList != nil {
@@ -118,6 +122,7 @@ func (analyzer *myAnalyzer) Analyze(
 		}
 	}
 	if len(errorList) == 0 {
+		//只有在处理过程中没有发现错误，完成处理数量才加1
 		analyzer.ModuleInternal.IncrCompletedCount()
 	}
 	return dataList, errorList
@@ -129,10 +134,14 @@ func appendDataList(dataList []module.Data, data module.Data, respDepth uint32) 
 		return dataList
 	}
 	req, ok := data.(*module.Request)
+	//如果分析后的结果不是新的请求
 	if !ok {
 		return append(dataList, data)
 	}
+	//如果分析出的结果是新请求
+	//请求深度加1
 	newDepth := respDepth + 1
+	//如果请求深度和新响应深度不等
 	if req.Depth() != newDepth {
 		req = module.NewRequest(req.HTTPReq(), newDepth)
 	}

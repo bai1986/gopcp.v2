@@ -55,6 +55,7 @@ type Module interface {
 // Downloader 代表下载器的接口类型。
 // 该接口的实现类型必须是并发安全的！
 type Downloader interface {
+	//module表示组件的基础配置信息
 	Module
 	// Download 会根据请求获取内容并返回响应。
 	Download(req *Request) (*Response, error)

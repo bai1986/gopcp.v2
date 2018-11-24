@@ -3,7 +3,6 @@ package scheduler
 import (
 	"encoding/json"
 	"sort"
-
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/chapter6/webcrawler/toolkit/buffer"
 )

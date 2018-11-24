@@ -49,7 +49,7 @@ func CheckType(moduleType Type, module Module) bool {
 	return false
 }
 
-// LegalType 用于判断给定的组件类型是否合法。
+// LegalType 用于判断给定的组件类型  是否合法。
 func LegalType(moduleType Type) bool {
 	if _, ok := legalTypeLetterMap[moduleType]; ok {
 		return true

@@ -3,7 +3,6 @@ package stub
 import (
 	"fmt"
 	"sync/atomic"
-
 	"gopcp.v2/chapter6/webcrawler/errors"
 	"gopcp.v2/chapter6/webcrawler/module"
 	"gopcp.v2/helper/log"

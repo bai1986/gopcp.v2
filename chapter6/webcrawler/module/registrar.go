@@ -3,7 +3,6 @@ package module
 import (
 	"fmt"
 	"sync"
-
 	"gopcp.v2/chapter6/webcrawler/errors"
 )
 
